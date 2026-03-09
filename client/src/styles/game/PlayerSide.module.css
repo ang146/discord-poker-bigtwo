@@ -1,0 +1,99 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ── Avatar ── */
+.avatarWrap {
+  position: relative;
+  width: 56px;
+  height: 56px;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--c, #555);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.12),
+    0 4px 18px rgba(0, 0, 0, 0.55);
+  transition: box-shadow 0.2s;
+}
+
+.self .avatar {
+  box-shadow:
+    0 0 0 2px #d4af6e,
+    0 0 0 5px rgba(212, 175, 110, 0.25),
+    0 4px 18px rgba(0, 0, 0, 0.55);
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.initials {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  user-select: none;
+}
+
+/* ── Speaking ring ── */
+.speakRing {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2.5px solid #4ade80;
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+  pointer-events: none;
+  animation: speakPulse 0.85s ease-in-out infinite alternate;
+}
+
+@keyframes speakPulse {
+  from { opacity: 0.65; transform: scale(1);    }
+  to   { opacity: 1;    transform: scale(1.04); }
+}
+
+.speaking .avatar {
+  box-shadow:
+    0 0 0 2px rgba(74, 222, 128, 0.7),
+    0 4px 18px rgba(0, 0, 0, 0.55);
+}
+
+/* ── Name ── */
+.name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #e8dcc8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 72px;
+  text-align: center;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.9);
+}
+
+.youSuffix {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 9px;
+  color: #d4af6e;
+}
+
+/* ── Position-specific tweaks ── */
+.left .name,
+.right .name {
+  max-width: 60px;
+  font-size: 10px;
+}

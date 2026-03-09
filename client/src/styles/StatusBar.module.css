@@ -1,0 +1,126 @@
+.bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: rgba(10, 14, 10, 0.8);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  gap: 12px;
+  flex-shrink: 0;
+  backdrop-filter: blur(6px);
+}
+
+.left, .right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 100px;
+}
+
+.right { justify-content: flex-end; }
+
+.centre {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dotOnline {
+  background: #4ade80;
+  box-shadow: 0 0 6px #4ade80;
+  animation: pulse 2.5s ease-in-out infinite;
+}
+
+.dotOffline { background: #f87171; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+.label {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.05em;
+}
+
+.roomLabel {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+}
+
+.roomId {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: #d4af6e;
+  background: rgba(212,175,110,0.08);
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(212,175,110,0.18);
+}
+
+.seats {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+}
+
+.slash {
+  color: rgba(255,255,255,0.2);
+  margin: 0 1px;
+}
+
+/* Settings button */
+.settingsBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+
+.settingsBtn:hover {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.8);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.settingsBtn:active {
+  transform: scale(0.94);
+}
+
+.errorBanner {
+  position: absolute;
+  bottom: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(239,68,68,0.15);
+  border: 1px solid rgba(239,68,68,0.35);
+  color: #fca5a5;
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 11px;
+  padding: 4px 14px;
+  border-radius: 6px;
+  white-space: nowrap;
+  z-index: 10;
+}

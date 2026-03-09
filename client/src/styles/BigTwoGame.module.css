@@ -1,0 +1,127 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* ── Outer game layout ── */
+.gameArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px 12px; 
+  gap: 6px;
+  min-height: 0;
+}
+
+.topZone,
+.bottomZone {
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.middleRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+.sideZone {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 72px;
+}
+
+/* ── Table wrapper — keeps aspect ratio square ── */
+.tableWrap {
+  aspect-ratio: 1;
+  height: min(calc(100vh - 280px), calc(100vw - 200px));
+  max-height: 100%;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+/* ── Table surface ── */
+.table {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 5px;
+
+  /* Felt */
+  background-color: #1b5e38;
+  background-image:
+    radial-gradient(ellipse at 50% 44%, rgba(255, 255, 255, 0.09) 0%, transparent 62%),
+    radial-gradient(rgba(0, 0, 0, 0.2) 1px, transparent 1px);
+  background-size: 100% 100%, 3px 3px;
+
+  /* Wood rail — layered box-shadow */
+  box-shadow:
+    0 0 0 10px #7a4520,
+    0 0 0 13px #5c3212,
+    0 0 0 16px #3a1e0a,
+    0 0 0 18px #1c0e04,
+    0 24px 72px rgba(0, 0, 0, 0.9),
+    inset 0 1px 6px rgba(255, 255, 255, 0.06),
+    inset 0 -1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Table interior 3×3 grid ── */
+.tableGrid {
+  position: absolute;
+  inset: 8px;
+  display: grid;
+  grid-template-columns: 68px 1fr 68px;
+  grid-template-rows: 68px 1fr 68px;
+  gap: 4px;
+}
+
+.corner {
+  /* reserved — future card-corner decorations */
+}
+
+/* Hand zones — reserved card areas, minimal visual footprint */
+.handZone {
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.07);
+  transition: background 0.2s;
+}
+
+/* Center play area */
+.centerZone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 7px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.centerSuits {
+  font-size: clamp(11px, 2.2vw, 17px);
+  letter-spacing: 0.32em;
+  color: rgba(255, 255, 255, 0.1);
+  user-select: none;
+}
+
+.centerLabel {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: clamp(7px, 1.2vw, 10px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.13);
+  user-select: none;
+}

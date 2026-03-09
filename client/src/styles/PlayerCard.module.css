@@ -1,0 +1,183 @@
+/* ═══════════════════════════════════════════
+   Full seated-player card (horizontal row)
+═══════════════════════════════════════════ */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 10px 12px;
+  width: 100px;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px;
+  transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+  animation: cardIn 0.3s cubic-bezier(0.34,1.4,0.64,1) both;
+}
+
+@keyframes cardIn {
+  from { opacity:0; transform:scale(0.88) translateY(8px); }
+  to   { opacity:1; transform:scale(1)    translateY(0); }
+}
+
+.card.self    { border-color:rgba(212,175,110,0.30); background:rgba(212,175,110,0.05); }
+.card.ready   { border-color:rgba(74,222,128,0.38);  background:rgba(74,222,128,0.05); box-shadow:0 0 16px rgba(74,222,128,0.08); }
+.card.speaking{ box-shadow: 0 0 0 2px #4ade80, 0 0 18px rgba(74,222,128,0.25); }
+
+/* Avatar */
+.avatarWrap { position:relative; width:52px; height:52px; flex-shrink:0; }
+
+.avatar {
+  width:52px; height:52px;
+  border-radius:50%;
+  background: var(--c,#555);
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+  box-shadow:0 3px 12px rgba(0,0,0,0.4);
+  /* Safari clip fix */
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: radial-gradient(white, black);
+  flex-shrink:0;
+}
+.avatar img {
+  display:block;
+  width:52px;
+  height:52px;
+  object-fit:cover;
+  border-radius:0;
+}
+
+.initials {
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:17px; font-weight:700;
+  color:rgba(255,255,255,0.9);
+  user-select:none;
+}
+
+/* Speaking ring */
+.speakRing {
+  position:absolute; inset:-4px;
+  border-radius:50%;
+  border:2.5px solid #4ade80;
+  box-shadow:0 0 8px rgba(74,222,128,0.5);
+  animation:speakPulse 0.8s ease-in-out infinite alternate;
+  pointer-events:none;
+}
+@keyframes speakPulse {
+  from { opacity:0.7; transform:scale(1); }
+  to   { opacity:1;   transform:scale(1.05); }
+}
+
+/* Ready dot badge — anchored to bottom-right of avatar, does NOT hang below */
+.readyDot {
+  position:absolute; bottom:0; right:-3px;
+  width:18px; height:18px; border-radius:50%;
+  background:#4ade80;
+  display:flex; align-items:center; justify-content:center;
+  border:2px solid #0d1109;
+  color:#0d1109;
+  z-index:2;
+}
+.readyDot svg { width:9px; height:9px; }
+
+/* Info */
+.info { display:flex; flex-direction:column; align-items:center; gap:4px; width:100%; }
+
+.nameRow {
+  display:flex; align-items:center; gap:3px;
+  max-width:90px;
+  overflow:hidden;
+}
+
+.hostCrown { font-size:10px; color:#d4af6e; flex-shrink:0; line-height:1; }
+
+.name {
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:12px; font-weight:600; color:#e8dcc8;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  text-align:center;
+  max-width:90px;
+}
+.card.self .name { color:#f5e6c8; }
+
+/* "(you)" inline — lighter, same font-size */
+.youText {
+  font-family:'DM Mono','Courier New',monospace;
+  font-size:10px;
+  color:rgba(212,175,110,0.7);
+  font-weight:400;
+  letter-spacing:0;
+  white-space:nowrap;
+}
+
+.statusReady, .statusWaiting {
+  font-family:'DM Mono','Courier New',monospace;
+  font-size:9px; letter-spacing:0.1em; text-transform:uppercase;
+}
+.statusReady   { color:#4ade80; }
+.statusWaiting { color:rgba(255,255,255,0.25); }
+
+
+/* ═══════════════════════════════════════════
+   Compact spectator chip
+═══════════════════════════════════════════ */
+
+.chip {
+  position:relative;
+  width:36px; height:36px;
+  flex-shrink:0;
+  border-radius:50%;
+  transition:transform 0.15s;
+  cursor:default;
+}
+.chip:hover { transform:scale(1.1); }
+
+.chipAvatar {
+  width:36px; height:36px; border-radius:50%;
+  background:var(--c,#555);
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+  box-shadow:0 2px 8px rgba(0,0,0,0.4);
+  border:1.5px solid rgba(255,255,255,0.1);
+  /* Ensure border-radius clips children (Safari fix) */
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: radial-gradient(white, black);
+  flex-shrink:0;
+}
+/* Images must fill the circle exactly */
+.chipAvatar img {
+  display:block;
+  width:36px;
+  height:36px;
+  object-fit:cover;
+  border-radius:0; /* parent handles clipping via overflow:hidden */
+}
+
+.chipInitials {
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:12px; font-weight:700;
+  color:rgba(255,255,255,0.88);
+  user-select:none;
+}
+
+.chipSpeaking .chipAvatar {
+  box-shadow:0 0 0 2px #4ade80, 0 0 10px rgba(74,222,128,0.4);
+}
+
+.chipSpeakRing {
+  position:absolute; inset:-3px; border-radius:50%;
+  border:2px solid #4ade80;
+  box-shadow:0 0 6px rgba(74,222,128,0.5);
+  animation:speakPulse 0.8s ease-in-out infinite alternate;
+  pointer-events:none;
+}
+
+/* Small gold dot for "you" in spectators */
+.chipSelfDot {
+  position:absolute; bottom:0; right:0;
+  width:9px; height:9px; border-radius:50%;
+  background:#d4af6e;
+  border:1.5px solid #0d1109;
+}
