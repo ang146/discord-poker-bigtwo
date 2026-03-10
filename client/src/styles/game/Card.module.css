@@ -1,0 +1,100 @@
+/* ── Shared shell ── */
+.card {
+  position: relative;
+  border-radius: 7px;
+  flex-shrink: 0;
+  user-select: none;
+  /* Full card: scales with viewport, min floor so cards remain readable on mobile */
+  width:  var(--card-w, clamp(36px, 4.8vw, 54px));
+  height: var(--card-h, clamp(50px, 6.8vw, 76px));
+}
+
+/* ── Face-up ── */
+.face {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.15);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+.face.selected {
+  transform: translateY(-10px);
+  box-shadow:
+    0 8px 18px rgba(74,222,128,0.45),
+    0 0 0 2px #4ade80,
+    inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+/* ── Rank labels ── */
+.rank {
+  position: absolute;
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: clamp(8px, 1.2vw, 13px);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.rankTL { top: 4px; left: 5px; }
+
+.rankBR {
+  bottom: 4px;
+  right: 5px;
+  transform: rotate(180deg);
+  display: inline-block;
+}
+
+.underlined {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1.5px;
+}
+
+/* ── Centre suit ── */
+.suitCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(16px, 2.6vw, 28px);
+  line-height: 1;
+}
+
+/* ── Colour themes ── */
+.red .rank,
+.red .suitCenter   { color: #d62828; }
+.black .rank,
+.black .suitCenter { color: #111111; }
+
+/* ── Face-down ── */
+.back {
+  background: #6e1424;
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.backInner {
+  width:  calc(100% - 7px);
+  height: calc(100% - 7px);
+  border-radius: 4px;
+  border: 2px solid rgba(255,255,255,0.75);
+}
+
+/* ── Small variant — opponent face-down cards ── */
+.small {
+  width:  var(--card-w-sm, clamp(18px, 2.2vw, 26px));
+  height: var(--card-h-sm, clamp(26px, 3.1vw, 37px));
+  border-radius: 4px;
+}
+
+.small .backInner {
+  width:  calc(100% - 5px);
+  height: calc(100% - 5px);
+  border-width: 1.5px;
+}
+
+.small .rank        { font-size: clamp(6px, 0.8vw, 9px); }
+.small .rankTL      { top: 2px; left: 3px; }
+.small .rankBR      { bottom: 2px; right: 3px; }
+.small .suitCenter  { font-size: clamp(10px, 1.4vw, 15px); }

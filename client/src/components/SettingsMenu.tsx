@@ -5,14 +5,14 @@ import styles from '../styles/SettingsMenu.module.css';
 type Props = {
   isOpen: boolean;
   selectedGame: GameId;
-  botsEnabled: boolean;
-  isHost: boolean;
+  botsEnabled?: boolean;
+  isHost?: boolean;
   onSelectGame: (game: GameId) => void;
-  onToggleBots: (enabled: boolean) => void;
+  onToggleBots?: (enabled: boolean) => void;
   onClose: () => void;
 };
 
-export function SettingsMenu({ isOpen, selectedGame, botsEnabled, isHost, onSelectGame, onToggleBots, onClose }: Props) {
+export function SettingsMenu({ isOpen, selectedGame, botsEnabled = false, isHost = false, onSelectGame, onToggleBots, onClose }: Props) {
   const panelRef = useRef<HTMLDivElement>(null);
 
   // Close on outside click
@@ -58,24 +58,6 @@ export function SettingsMenu({ isOpen, selectedGame, botsEnabled, isHost, onSele
           </button>
         </div>
 
-        {isHost && (
-          <div className={styles.section}>
-            <p className={styles.sectionLabel}>Players</p>
-            <button
-              className={`${styles.toggleRow} ${botsEnabled ? styles.toggleRowOn : ''}`}
-              onClick={() => onToggleBots(!botsEnabled)}
-            >
-              <div className={styles.toggleInfo}>
-                <span className={styles.toggleLabel}>Fill with bots</span>
-                <span className={styles.toggleDesc}>Empty seats controlled by AI</span>
-              </div>
-              <div className={`${styles.togglePill} ${botsEnabled ? styles.togglePillOn : ''}`}>
-                <div className={styles.toggleThumb} />
-              </div>
-            </button>
-          </div>
-        )}
-
         <div className={styles.section}>
           <p className={styles.sectionLabel}>Game</p>
           <div className={styles.gameList}>
@@ -100,6 +82,24 @@ export function SettingsMenu({ isOpen, selectedGame, botsEnabled, isHost, onSele
             ))}
           </div>
         </div>
+
+        {isHost && onToggleBots && (
+          <div className={styles.section}>
+            <p className={styles.sectionLabel}>Players</p>
+            <button
+              className={`${styles.toggleRow} ${botsEnabled ? styles.toggleRowOn : ''}`}
+              onClick={() => onToggleBots(!botsEnabled)}
+            >
+              <div className={styles.toggleInfo}>
+                <span className={styles.toggleLabel}>Fill with bots</span>
+                <span className={styles.toggleDesc}>Empty seats controlled by AI</span>
+              </div>
+              <div className={`${styles.togglePill} ${botsEnabled ? styles.togglePillOn : ''}`}>
+                <div className={styles.toggleThumb} />
+              </div>
+            </button>
+          </div>
+        )}
 
         <p className={styles.hint}>
           More games coming soon

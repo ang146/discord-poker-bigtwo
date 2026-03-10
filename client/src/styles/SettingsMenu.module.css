@@ -154,6 +154,7 @@
   flex-shrink: 0;
 }
 
+/* ── Bots toggle row ── */
 .toggleRow {
   display: flex;
   align-items: center;

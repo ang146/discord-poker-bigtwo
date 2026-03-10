@@ -1,99 +1,143 @@
-.wrap {
+/* ── Outer wrapper ── */
+.wrap { display: flex; align-items: center; gap: 6px; }
+
+.top    { flex-direction: column; gap: 4px; }
+.bottom { flex-direction: column; gap: 4px; }
+.left   { flex-direction: row; }
+.right  { flex-direction: row; }
+
+/* ── Identity: avatar + name ── */
+.identity {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
+  flex-shrink: 0;
 }
 
 /* ── Avatar ── */
 .avatarWrap {
   position: relative;
-  width: 56px;
-  height: 56px;
+  width: clamp(32px, 4vw, 48px);
+  height: clamp(32px, 4vw, 48px);
+  flex-shrink: 0;
 }
 
 .avatar {
-  width: 56px;
-  height: 56px;
+  width: 100%; height: 100%;
   border-radius: 50%;
   background: var(--c, #555);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   overflow: hidden;
-  box-shadow:
-    0 0 0 2px rgba(255, 255, 255, 0.12),
-    0 4px 18px rgba(0, 0, 0, 0.55);
-  transition: box-shadow 0.2s;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.1), 0 3px 14px rgba(0,0,0,0.55);
 }
 
-.self .avatar {
+.avatarSelf {
   box-shadow:
-    0 0 0 2px #d4af6e,
-    0 0 0 5px rgba(212, 175, 110, 0.25),
-    0 4px 18px rgba(0, 0, 0, 0.55);
+    0 0 0 2.5px #d4af6e,
+    0 0 0 5px rgba(212,175,110,0.2),
+    0 3px 14px rgba(0,0,0,0.55);
 }
 
-.img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
+.img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
 .initials {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: 17px;
+  font-size: clamp(11px, 1.8vw, 16px);
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255,255,255,0.9);
   user-select: none;
 }
 
-/* ── Speaking ring ── */
 .speakRing {
-  position: absolute;
-  inset: -4px;
+  position: absolute; inset: -4px;
   border-radius: 50%;
   border: 2.5px solid #4ade80;
-  box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+  box-shadow: 0 0 10px rgba(74,222,128,0.5);
   pointer-events: none;
   animation: speakPulse 0.85s ease-in-out infinite alternate;
 }
 
 @keyframes speakPulse {
-  from { opacity: 0.65; transform: scale(1);    }
-  to   { opacity: 1;    transform: scale(1.04); }
+  from { opacity: 0.6; transform: scale(1);    }
+  to   { opacity: 1;   transform: scale(1.04); }
 }
 
-.speaking .avatar {
-  box-shadow:
-    0 0 0 2px rgba(74, 222, 128, 0.7),
-    0 4px 18px rgba(0, 0, 0, 0.55);
-}
-
-/* ── Name ── */
 .name {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: 11px;
+  font-size: clamp(8px, 1.1vw, 11px);
   font-weight: 600;
   color: #e8dcc8;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 72px;
+  max-width: 68px;
   text-align: center;
-  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.9);
+  text-shadow: 0 1px 6px rgba(0,0,0,0.95);
 }
 
-.youSuffix {
+.you {
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: 9px;
+  font-size: 8px;
   color: #d4af6e;
 }
 
-/* ── Position-specific tweaks ── */
-.left .name,
-.right .name {
-  max-width: 60px;
-  font-size: 10px;
+/* ── Self hand — face-up horizontal fan ── */
+.handRowFaceUp { display: flex; flex-direction: row; }
+
+.handRowFaceUp > * {
+  margin-right: clamp(-32px, -4.5vw, -20px);
+  transition: transform 0.15s, margin-right 0.15s;
+  cursor: pointer;
 }
+.handRowFaceUp > *:hover {
+  transform: translateY(-12px);
+  margin-right: clamp(-26px, -3.5vw, -16px);
+  z-index: 10;
+}
+.handRowFaceUp > *:last-child { margin-right: 0; }
+
+/* ── Top opponent — face-down horizontal fan ── */
+.handRowFaceDown { display: flex; flex-direction: row; }
+.handRowFaceDown > * { margin-right: -10px; }
+.handRowFaceDown > *:last-child { margin-right: 0; }
+
+/* ── Side hand rotation ─────────────────────────────────────────────────────
+   Strategy: render the fan normally (horizontal row of small cards with
+   overlap), then rotate the whole strip 90°.
+
+   The outer wrapper has an EXPLICIT size that matches the rotated footprint,
+   so the flex/grid parent always measures a correct bounding box.
+
+   A small card is ~26px wide × 37px tall (clamp midpoint).
+   13 cards with -10px overlap = 13*26 - 12*10 = 218px fan width, ~37px tall.
+   After 90° rotation: layout width = 37px, layout height = 218px.
+   We set the outer wrapper to exactly those values.
+────────────────────────────────────────────────────────────────────────────── */
+.sideHandOuter {
+  /* Matches the rotated dimensions so the parent measures correctly */
+  width:  37px;
+  height: 218px;
+  position: relative;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.sideHandInner {
+  /* Render as a normal horizontal fan, then rotate in place */
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  /* Centre the inner strip in the outer wrapper */
+  top: 50%;
+  left: 50%;
+  transform-origin: center center;
+}
+
+.sideHandInner > * { margin-right: -10px; }
+.sideHandInner > *:last-child { margin-right: 0; }
+
+/* Left player: fan points upward (toward table) */
+.rotateLeft  { transform: translate(-50%, -50%) rotate(-90deg); }
+/* Right player: fan points downward (toward table) */
+.rotateRight { transform: translate(-50%, -50%) rotate(90deg); }

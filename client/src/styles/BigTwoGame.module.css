@@ -6,122 +6,138 @@
   overflow: hidden;
 }
 
-/* ── Outer game layout ── */
+/*
+ * 3×3 named grid.
+ * Columns: fixed side widths (just enough for a vertical card stack)
+ *          + 1fr for the table in the middle.
+ * Rows:    auto for top/bottom player zones,
+ *          1fr  for the table row.
+ *
+ * Crucially: side columns are FIXED px, not `auto`.
+ * `auto` would size to the layout bounding-box of the content,
+ * which broke when the old code used transform:rotate(90deg).
+ */
 .gameArea {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 8px 16px 12px; 
-  gap: 6px;
+  padding: 8px 12px 10px;
+  gap: 0;
   min-height: 0;
+  overflow: hidden;
+}.topZone {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 
-.topZone,
 .bottomZone {
   display: flex;
   justify-content: center;
+  align-items: flex-start;
   flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .middleRow {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  flex: 1;
-  min-height: 0;
-}
-
-.sideZone {
-  display: flex;
+  flex-direction: row;
   align-items: center;
   flex-shrink: 0;
-  width: 72px;
 }
 
-/* ── Table wrapper — keeps aspect ratio square ── */
-.tableWrap {
-  aspect-ratio: 1;
-  height: min(calc(100vh - 280px), calc(100vw - 200px));
-  max-height: 100%;
-  flex-shrink: 1;
-  min-width: 0;
-}
-
-/* ── Table surface ── */
-.table {
-  width: 100%;
-  height: 100%;
+.leftZone {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
   position: relative;
-  border-radius: 5px;
+  z-index: 2;
+}
 
-  /* Felt */
+.rightZone {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.tableWrap {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.table {
+  width:  min(60vw, 700px);
+  height: min(55vh, 480px);
+  position: relative;
+
   background-color: #1b5e38;
   background-image:
-    radial-gradient(ellipse at 50% 44%, rgba(255, 255, 255, 0.09) 0%, transparent 62%),
-    radial-gradient(rgba(0, 0, 0, 0.2) 1px, transparent 1px);
+    radial-gradient(ellipse at 48% 42%, rgba(255,255,255,0.09) 0%, transparent 58%),
+    radial-gradient(rgba(0,0,0,0.18) 1px, transparent 1px);
   background-size: 100% 100%, 3px 3px;
 
-  /* Wood rail — layered box-shadow */
+  border-radius: 6px;
   box-shadow:
-    0 0 0 10px #7a4520,
-    0 0 0 13px #5c3212,
-    0 0 0 16px #3a1e0a,
-    0 0 0 18px #1c0e04,
-    0 24px 72px rgba(0, 0, 0, 0.9),
-    inset 0 1px 6px rgba(255, 255, 255, 0.06),
-    inset 0 -1px 4px rgba(0, 0, 0, 0.3);
+    0 0 0 9px #7a4a20,
+    0 0 0 13px #5a3010,
+    0 0 0 16px #3a1e08,
+    0 0 0 18px #1e0e04,
+    0 16px 60px rgba(0,0,0,0.8),
+    inset 0 1px 8px rgba(255,255,255,0.07),
+    inset 0 -2px 6px rgba(0,0,0,0.25);
 }
 
-/* ── Table interior 3×3 grid ── */
 .tableGrid {
   position: absolute;
-  inset: 8px;
+  inset: 10px;
   display: grid;
-  grid-template-columns: 68px 1fr 68px;
-  grid-template-rows: 68px 1fr 68px;
-  gap: 4px;
+  grid-template-columns: 22% 1fr 22%;
+  grid-template-rows:    22% 1fr 22%;
+  gap: 3px;
 }
 
-.corner {
-  /* reserved — future card-corner decorations */
-}
+.corner {}
 
-/* Hand zones — reserved card areas, minimal visual footprint */
 .handZone {
-  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border: 1px dashed rgba(255,255,255,0.1);
   border-radius: 5px;
-  background: rgba(0, 0, 0, 0.07);
-  transition: background 0.2s;
+  background: rgba(0,0,0,0.06);
 }
 
-/* Center play area */
 .centerZone {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  gap: 4px;
+  border: 1px solid rgba(255,255,255,0.07);
   border-radius: 7px;
-  background: rgba(0, 0, 0, 0.14);
+  background: rgba(0,0,0,0.12);
 }
 
 .centerSuits {
-  font-size: clamp(11px, 2.2vw, 17px);
-  letter-spacing: 0.32em;
-  color: rgba(255, 255, 255, 0.1);
+  font-size: clamp(8px, 1.4vw, 15px);
+  letter-spacing: 0.35em;
+  color: rgba(255,255,255,0.1);
   user-select: none;
 }
 
 .centerLabel {
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: clamp(7px, 1.2vw, 10px);
-  letter-spacing: 0.18em;
+  font-size: clamp(6px, 0.8vw, 9px);
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.13);
+  color: rgba(255,255,255,0.12);
   user-select: none;
 }
