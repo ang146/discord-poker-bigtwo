@@ -28,8 +28,8 @@ export function LobbyPage({ sdk, userId, displayName, avatarUrl, instanceId }: P
   );
 
   const {
-    roomState, hand, playerCardCounts, connectionError, isConnected,
-    sitDown, standUp, setReady, setGame, setBots, transferHost, startGame,
+    roomState, hand, turnState, connectionError, isConnected,
+    sitDown, standUp, setReady, setGame, setBots, transferHost, startGame, playCards, pass,
   } = useRoom({ roomId: instanceId, player: selfAsPlayer });
 
   const speaking = useVoiceState(sdk);
@@ -43,7 +43,10 @@ export function LobbyPage({ sdk, userId, displayName, avatarUrl, instanceId }: P
         roomState={roomState}
         isConnected={isConnected}
         hand={hand}
-        playerCardCounts={playerCardCounts}
+        turnState={turnState}
+        playCards={playCards}
+        pass={pass}
+        
       />
     );
   }

@@ -28,21 +28,25 @@ export const GAME_MAX_PLAYERS: Record<GameId, number> = {
 // Suit order: ♦ < ♣ < ♥ < ♠ (lowest to highest in Big Two)
 // Rank order: 3 < 4 < … < K < A < 2 (lowest to highest in Big Two)
 
-export type Suit = "♦" | "♣" | "♥" | "♠";
-export type Rank =
-  | "3"
-  | "4"
-  | "5"
-  | "6"
-  | "7"
-  | "8"
-  | "9"
-  | "10"
-  | "J"
-  | "Q"
-  | "K"
-  | "A"
-  | "2";
+export const SUITS = ["♦", "♣", "♥", "♠"] as const;
+export const RANKS = [
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "10",
+  "J",
+  "Q",
+  "K",
+  "A",
+  "2",
+] as const;
+
+export type Suit = (typeof SUITS)[number];
+export type Rank = (typeof RANKS)[number];
 
 export type Card = {
   suit: Suit;
@@ -101,4 +105,22 @@ export type GameHandPayload = {
   hand: Card[];
   /** Card counts for every seat (for rendering face-down hands) */
   playerCardCounts: { userId: string; count: number }[];
+};
+
+// ─── In-game turn state (broadcast to all clients) ───────────────────────────
+
+export type GameTurnState = {
+  /** userId of the player whose turn it is */
+  currentTurn: string;
+  /** Cards on the center pile (last played) */
+  centerPile: Card[];
+  /** How many cards each player still holds */
+  playerCardCounts: { userId: string; count: number }[];
+};
+
+// ─── Socket payloads (game actions) ─────────────────────────────────────────
+
+export type PlayCardsPayload = {
+  roomId: string;
+  cards: Card[];
 };

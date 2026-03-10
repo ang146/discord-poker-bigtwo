@@ -1,4 +1,4 @@
-/* ── Shared shell ── */
+/* ── Shared card shell ── */
 .card {
   position: relative;
   border-radius: 7px;
@@ -9,19 +9,21 @@
   height: var(--card-h, clamp(50px, 6.8vw, 76px));
 }
 
-/* ── Face-up ── */
+/* ── Face-up card ── */
 .face {
   background: #ffffff;
-  border: 1px solid rgba(0,0,0,0.15);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.9);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .face.selected {
   transform: translateY(-10px);
   box-shadow:
-    0 8px 18px rgba(74,222,128,0.45),
+    0 8px 18px rgba(74, 222, 128, 0.45),
     0 0 0 2px #4ade80,
-    inset 0 1px 0 rgba(255,255,255,0.9);
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 /* ── Rank labels ── */
@@ -33,22 +35,27 @@
   line-height: 1;
 }
 
-.rankTL { top: 4px; left: 5px; }
+.rankTL {
+  top: 5px;
+  left: 6px;
+}
 
+/* Flipped 180° so it reads right when the card is upside-down */
 .rankBR {
-  bottom: 4px;
-  right: 5px;
+  bottom: 5px;
+  right: 6px;
   transform: rotate(180deg);
   display: inline-block;
 }
 
+/* Underline for 6 and 9 — prevents confusion when rotated */
 .underlined {
   text-decoration: underline;
   text-underline-offset: 2px;
   text-decoration-thickness: 1.5px;
 }
 
-/* ── Centre suit ── */
+/* ── Suit symbol ── */
 .suitCenter {
   position: absolute;
   top: 50%;
@@ -60,41 +67,53 @@
 
 /* ── Colour themes ── */
 .red .rank,
-.red .suitCenter   { color: #d62828; }
-.black .rank,
-.black .suitCenter { color: #111111; }
+.red .suitCenter {
+  color: #d62828;
+}
 
-/* ── Face-down ── */
+.black .rank,
+.black .suitCenter {
+  color: #111111;
+}
+
+/* ── Face-down card ── */
 .back {
   background: #6e1424;
-  border: 1px solid rgba(255,255,255,0.15);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.45);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+/* White inner border — the classic back design */
 .backInner {
-  width:  calc(100% - 7px);
-  height: calc(100% - 7px);
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
   border-radius: 4px;
-  border: 2px solid rgba(255,255,255,0.75);
+  border: 2px solid rgba(255, 255, 255, 0.75);
 }
 
-/* ── Small variant — opponent face-down cards ── */
+/* ── Small size (face-down opponent fans) ── */
 .small {
   width:  var(--card-w-sm, clamp(18px, 2.2vw, 26px));
   height: var(--card-h-sm, clamp(26px, 3.1vw, 37px));
-  border-radius: 4px;
+  border-radius: 5px;
 }
 
 .small .backInner {
-  width:  calc(100% - 5px);
-  height: calc(100% - 5px);
+  width: calc(100% - 6px);
+  height: calc(100% - 6px);
   border-width: 1.5px;
 }
 
-.small .rank        { font-size: clamp(6px, 0.8vw, 9px); }
-.small .rankTL      { top: 2px; left: 3px; }
-.small .rankBR      { bottom: 2px; right: 3px; }
-.small .suitCenter  { font-size: clamp(10px, 1.4vw, 15px); }
+.small .rank {
+  font-size: clamp(6px, 0.8vw, 9px);;
+}
+
+.small .rankTL { top: 3px; left: 4px; }
+.small .rankBR { bottom: 3px; right: 4px; }
+
+.small .suitCenter {
+  font-size: clamp(10px, 1.4vw, 15px);
+}

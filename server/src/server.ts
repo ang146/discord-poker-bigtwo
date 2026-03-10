@@ -12,8 +12,10 @@ import type {
   Suit,
   Rank,
   GameHandPayload,
+  GameTurnState,
+  PlayCardsPayload,
 } from "../../shared/types";
-import { GAME_MAX_PLAYERS } from "../../shared/types";
+import { GAME_MAX_PLAYERS, SUITS, RANKS } from "../../shared/types";
 
 dotenv.config({ path: "../.env" });
 
@@ -31,28 +33,14 @@ if (!CLIENT_ID || !CLIENT_SECRET) {
 
 type GameSession = {
   hands: Map<string, Card[]>;
+  currentTurn: string; // userId
+  centerPile: Card[];
+  turnOrder: string[]; // userIds in seat order
 };
 
 const gameSessions = new Map<string, GameSession>();
 
 // ─── Card dealing ─────────────────────────────────────────────────────────────
-
-const SUITS: Suit[] = ["♦", "♣", "♥", "♠"];
-const RANKS: Rank[] = [
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
-  "10",
-  "J",
-  "Q",
-  "K",
-  "A",
-  "2",
-];
 
 function createDeck(): Card[] {
   const deck: Card[] = [];
@@ -76,6 +64,20 @@ function deal(players: Player[]): Map<string, Card[]> {
     hands.set(p.userId, deck.slice(i * 13, (i + 1) * 13));
   });
   return hands;
+}
+
+// ─── Turn state broadcast ─────────────────────────────────────────────────────
+
+function broadcastTurn(roomId: string, session: GameSession): void {
+  const state: GameTurnState = {
+    currentTurn: session.currentTurn,
+    centerPile: session.centerPile,
+    playerCardCounts: session.turnOrder.map((uid) => ({
+      userId: uid,
+      count: session.hands.get(uid)?.length ?? 0,
+    })),
+  };
+  io.to(roomId).emit("game:turn", state);
 }
 
 // ─── Express ─────────────────────────────────────────────────────────────────
@@ -191,7 +193,6 @@ io.on("connection", (socket) => {
   socket.on("room:join", (payload: { roomId: string; player: HumanPlayer }) => {
     const { roomId, player } = payload;
     if (!roomId || !player?.userId) return;
-
     const room = getOrCreateRoom(roomId, player.userId);
     const existing = findPlayer(room, player.userId);
     if (existing) {
@@ -200,17 +201,14 @@ io.on("connection", (socket) => {
     } else {
       room.spectators.push({ ...player, isReady: false, type: "human" });
     }
-
     socket.join(roomId);
     socket.data.roomId = roomId;
     socket.data.userId = player.userId;
-    console.log(`[socket] ${player.displayName} joined ${roomId}`);
     broadcast(roomId);
-
-    // Re-send hand if reconnecting during an active game
     const session = gameSessions.get(roomId);
     if (session && room.phase === "inGame" && room.gamePlayers) {
       sendHandToSocket(socket, session, room.gamePlayers);
+      broadcastTurn(roomId, session);
     }
   });
 
@@ -306,8 +304,6 @@ io.on("connection", (socket) => {
       if (room.players.length !== max || !room.players.every((p) => p.isReady))
         return;
     }
-
-    // Build final seat list — bots injected here only, never stored in room.players
     const BOT_NAMES = ["Bot Alice", "Bot Bob", "Bot Carol", "Bot Dave"];
     const gamePlayers: Player[] = [...room.players];
 
@@ -325,18 +321,76 @@ io.on("connection", (socket) => {
         gamePlayers.push(bot);
       }
     }
-
-    const session: GameSession = { hands: deal(gamePlayers) };
+    const hands = deal(gamePlayers);
+    // First turn: player who holds 3♦
+    const starterUserId = (() => {
+      for (const [uid, hand] of hands) {
+        if (hand.some((c) => c.rank === "3" && c.suit === "♦")) return uid;
+      }
+      return gamePlayers[0].userId;
+    })();
+    const session: GameSession = {
+      hands,
+      currentTurn: starterUserId,
+      centerPile: [],
+      turnOrder: gamePlayers.map((p) => p.userId),
+    };
     gameSessions.set(roomId, session);
 
     room.gamePlayers = gamePlayers;
     room.phase = "inGame";
-
-    console.log(
-      `[socket] Game started in ${roomId} — ${gamePlayers.length} players`,
-    );
     broadcast(roomId);
     broadcastHands(roomId, session, gamePlayers);
+    broadcastTurn(roomId, session);
+  });
+
+  // ── Play cards ────────────────────────────────────────────────────────────
+  socket.on("game:play", (payload: PlayCardsPayload) => {
+    const { roomId, cards } = payload;
+    const userId = socket.data.userId as string | undefined;
+    if (!userId || !roomId || !cards?.length) return;
+    const session = gameSessions.get(roomId);
+    if (!session || session.currentTurn !== userId) return;
+    const hand = session.hands.get(userId);
+    if (!hand) return;
+    // Verify every played card is actually in the player's hand
+    const remaining = [...hand];
+    for (const pc of cards) {
+      const idx = remaining.findIndex(
+        (c) => c.rank === pc.rank && c.suit === pc.suit,
+      );
+      if (idx === -1) return; // cheating attempt
+      remaining.splice(idx, 1);
+    }
+    // Commit: update hand, center pile, advance turn
+    session.hands.set(userId, remaining);
+    session.centerPile = cards;
+    const myIdx = session.turnOrder.indexOf(userId);
+    session.currentTurn =
+      session.turnOrder[(myIdx + 1) % session.turnOrder.length];
+    // Send updated hand only to the player who played
+    const room = rooms.get(roomId);
+    if (room?.gamePlayers) {
+      io.sockets.sockets.forEach((sock) => {
+        if (sock.rooms.has(roomId) && sock.data.userId === userId) {
+          sendHandToSocket(sock, session, room.gamePlayers!);
+        }
+      });
+    }
+    broadcastTurn(roomId, session);
+  });
+
+  // ── Pass ──────────────────────────────────────────────────────────────────
+  socket.on("game:pass", (payload: { roomId: string }) => {
+    const { roomId } = payload;
+    const userId = socket.data.userId as string | undefined;
+    if (!userId || !roomId) return;
+    const session = gameSessions.get(roomId);
+    if (!session || session.currentTurn !== userId) return;
+    const myIdx = session.turnOrder.indexOf(userId);
+    session.currentTurn =
+      session.turnOrder[(myIdx + 1) % session.turnOrder.length];
+    broadcastTurn(roomId, session);
   });
 
   socket.on("disconnecting", () => {
@@ -360,7 +414,6 @@ io.on("connection", (socket) => {
       const next = room.players[0] ?? room.spectators[0];
       if (next) {
         room.hostUserId = next.userId;
-        console.log(`[socket] Host → ${next.displayName}`);
       }
     }
 

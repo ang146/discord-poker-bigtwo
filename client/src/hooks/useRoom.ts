@@ -6,6 +6,7 @@ import type {
   GameId,
   Card,
   GameHandPayload,
+  GameTurnState,
 } from "../types";
 
 type UseRoomOptions = {
@@ -16,26 +17,24 @@ type UseRoomOptions = {
 type UseRoomReturn = {
   roomState: RoomState | null;
   hand: Card[];
-  playerCardCounts: { userId: string; count: number }[];
+  turnState: GameTurnState | null;
   connectionError: string | null;
   isConnected: boolean;
-  // Player actions
   sitDown: () => void;
   standUp: () => void;
   setReady: (ready: boolean) => void;
-  // Host actions
   setGame: (game: GameId) => void;
   setBots: (enabled: boolean) => void;
   transferHost: (toUserId: string) => void;
   startGame: () => void;
+  playCards: (cards: Card[]) => void;
+  pass: () => void;
 };
 
 export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
   const [roomState, setRoomState] = useState<RoomState | null>(null);
   const [hand, setHand] = useState<Card[]>([]);
-  const [playerCardCounts, setPlayerCardCounts] = useState<
-    { userId: string; count: number }[]
-  >([]);
+  const [turnState, setTurnState] = useState<GameTurnState | null>(null);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
@@ -51,12 +50,12 @@ export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
     function onRoomState(state: RoomState) {
       setRoomState(state);
     }
-
     function onGameHand(payload: GameHandPayload) {
       setHand(payload.hand);
-      setPlayerCardCounts(payload.playerCardCounts);
     }
-
+    function onGameTurn(state: GameTurnState) {
+      setTurnState(state);
+    }
     function onDisconnect() {
       setIsConnected(false);
     }
@@ -68,6 +67,7 @@ export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
     socket.on("connect", join);
     socket.on("room:state", onRoomState);
     socket.on("game:hand", onGameHand);
+    socket.on("game:turn", onGameTurn);
     socket.on("disconnect", onDisconnect);
     socket.on("connect_error", onConnectError);
 
@@ -75,6 +75,7 @@ export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
       socket.off("connect", join);
       socket.off("room:state", onRoomState);
       socket.off("game:hand", onGameHand);
+      socket.off("game:turn", onGameTurn);
       socket.off("disconnect", onDisconnect);
       socket.off("connect_error", onConnectError);
     };
@@ -85,7 +86,7 @@ export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
   return {
     roomState,
     hand,
-    playerCardCounts,
+    turnState,
     connectionError,
     isConnected,
     sitDown() {
@@ -94,13 +95,13 @@ export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
     standUp() {
       socket.emit("player:stand", { roomId, userId: player.userId });
     },
-    setReady(ready: boolean) {
+    setReady(ready) {
       socket.emit("player:ready", { roomId, userId: player.userId, ready });
     },
-    setGame(game: GameId) {
+    setGame(game) {
       socket.emit("room:set-game", { roomId, game });
     },
-    setBots(enabled: boolean) {
+    setBots(enabled) {
       socket.emit("room:set-bots", { roomId, enabled });
     },
     transferHost(toUserId) {
@@ -108,6 +109,12 @@ export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
     },
     startGame() {
       socket.emit("room:start-game", { roomId });
+    },
+    playCards(cards) {
+      socket.emit("game:play", { roomId, cards });
+    },
+    pass() {
+      socket.emit("game:pass", { roomId });
     },
   };
 }
