@@ -7,6 +7,9 @@ import type {
   Card,
   GameHandPayload,
   GameTurnState,
+  GameOverPayload,
+  VoteUpdatePayload,
+  VoteChoice,
 } from "../types";
 
 type UseRoomOptions = {
@@ -20,6 +23,10 @@ type UseRoomReturn = {
   turnState: GameTurnState | null;
   connectionError: string | null;
   isConnected: boolean;
+  lastError: string | null;
+  gameOver: GameOverPayload | null;
+  voteUpdate: VoteUpdatePayload | null;
+  clearError: () => void;
   sitDown: () => void;
   standUp: () => void;
   setReady: (ready: boolean) => void;
@@ -29,6 +36,7 @@ type UseRoomReturn = {
   startGame: () => void;
   playCards: (cards: Card[]) => void;
   pass: () => void;
+  vote: (choice: VoteChoice) => void;
 };
 
 export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
@@ -37,6 +45,9 @@ export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
   const [turnState, setTurnState] = useState<GameTurnState | null>(null);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [lastError, setLastError] = useState<string | null>(null);
+  const [gameOver, setGameOver] = useState<GameOverPayload | null>(null);
+  const [voteUpdate, setVoteUpdate] = useState<VoteUpdatePayload | null>(null);
 
   useEffect(() => {
     const socket = getSocket();
@@ -62,6 +73,27 @@ export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
     function onConnectError(err: Error) {
       setConnectionError(err.message ?? "Connection error");
     }
+    function onGamePlayOk(payload: GameHandPayload) {
+      setHand(payload.hand);
+      setLastError(null);
+    }
+    function onGamePlayError({ reason }: { reason: string }) {
+      setLastError(reason);
+    }
+    function onGameOver(payload: GameOverPayload) {
+      setGameOver(payload);
+      setVoteUpdate({
+        votes: payload.votes,
+        timeoutSeconds: payload.timeoutSeconds,
+      });
+    }
+    function onVoteUpdate(payload: VoteUpdatePayload) {
+      setVoteUpdate(payload);
+    }
+    function onReturnLobby() {
+      setGameOver(null);
+      setVoteUpdate(null);
+    }
 
     if (socket.connected) join();
     socket.on("connect", join);
@@ -70,6 +102,11 @@ export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
     socket.on("game:turn", onGameTurn);
     socket.on("disconnect", onDisconnect);
     socket.on("connect_error", onConnectError);
+    socket.on("game:play:ok", onGamePlayOk);
+    socket.on("game:play:error", onGamePlayError);
+    socket.on("game:over", onGameOver);
+    socket.on("game:vote:update", onVoteUpdate);
+    socket.on("game:return-lobby", onReturnLobby);
 
     return () => {
       socket.off("connect", join);
@@ -78,6 +115,11 @@ export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
       socket.off("game:turn", onGameTurn);
       socket.off("disconnect", onDisconnect);
       socket.off("connect_error", onConnectError);
+      socket.off("game:play:ok", onGamePlayOk);
+      socket.off("game:play:error", onGamePlayError);
+      socket.off("game:over", onGameOver);
+      socket.off("game:vote:update", onVoteUpdate);
+      socket.off("game:return-lobby", onReturnLobby);
     };
   }, [roomId, player.userId]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -89,6 +131,10 @@ export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
     turnState,
     connectionError,
     isConnected,
+    lastError,
+    gameOver,
+    voteUpdate,
+    clearError: () => setLastError(null),
     sitDown() {
       socket.emit("player:sit", { roomId, userId: player.userId });
     },
@@ -115,6 +161,9 @@ export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
     },
     pass() {
       socket.emit("game:pass", { roomId });
+    },
+    vote(choice) {
+      socket.emit("game:vote", { roomId, choice });
     },
   };
 }

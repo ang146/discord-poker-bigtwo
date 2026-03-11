@@ -30,15 +30,21 @@
 }
 
 .bottomZone {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   position: relative;
   z-index: 2;
-  gap: 10px;
   margin-top: 6px;
+}
+
+/* Wraps controls row + error row in a flex column */
+.bottomInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
 
 .middleRow {
@@ -68,6 +74,22 @@
   position: relative;
   z-index: 2;
   gap: 4px;
+}
+
+/* The horizontal row: sort | hand | play buttons */
+.controlsRow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Error row — only rendered when an error exists */
+.errorRow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
 }
 
 .tableWrap {
@@ -102,8 +124,8 @@
   position: absolute;
   inset: 10px;
   display: grid;
-  grid-template-columns: 10% 1fr 10%;
-  grid-template-rows:    10% 1fr 10%;
+  grid-template-columns: 15% 1fr 15%;
+  grid-template-rows:    20% 1fr 20%;
   gap: 3px;
 }
 
@@ -113,6 +135,34 @@
   border: 1px dashed rgba(255,255,255,0.1);
   border-radius: 5px;
   background: rgba(0,0,0,0.06);
+  display: flex;
+  justify-content: center;
+  align-items:  center;
+}
+
+.handTop,
+.handBottom {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  gap: 2px;
+  padding: 2px;
+}
+
+.handLeft,
+.handRight {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  /* Must have explicit dimensions — without these, flex-wrap has nothing to wrap into */
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  gap: 2px;
+  padding: 2px;
 }
 
 .centerZone {
@@ -156,6 +206,7 @@
 
 /* ── Turn label ── */
 .turnLabel {
+  position: absolute;
   font-family: 'Playfair Display', Georgia, serif;
   font-size: clamp(10px, 1.4vw, 14px);
   font-weight: 700;
@@ -166,6 +217,43 @@
   pointer-events: none;
   white-space: nowrap;
   animation: turnPulse 1.4s ease-in-out infinite alternate;
+
+  /* Default position — override per-zone below */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Sits below the top player, above the table */
+.topZone .turnLabel {
+  top: auto;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Sits to the right of the left player, toward the table */
+.leftZone .turnLabel {
+  top: 50%;
+  left: auto;
+  right: -36px;
+  transform: translateY(-50%);
+}
+
+/* Sits to the left of the right player, toward the table */
+.rightZone .turnLabel {
+  top: 50%;
+  left: -36px;
+  right: auto;
+  transform: translateY(-50%);
+}
+
+/* Sits above the bottom player (self), below the table */
+.bottomZone .turnLabel {
+  bottom: auto;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 @keyframes turnPulse {
@@ -231,6 +319,22 @@
   height: 60%;
 }
 
+.playError {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 14px;
+  color: #e57373;
+  text-align: center;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+
+.lastCardTip {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: #4ade80;
+  text-align: center;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
 .actionBtn {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: clamp(10px, 1.2vw, 13px);
@@ -255,6 +359,10 @@
   cursor: not-allowed;
 }
 
+.playBtn {
+  height: 100%;
+}
+
 .playBtn:not(:disabled) {
   background: rgba(212,175,110,0.15);
   border-color: rgba(212,175,110,0.5);
@@ -267,4 +375,36 @@
 
 .passBtn:not(:disabled) {
   background: rgba(255,255,255,0.05);
+}
+
+/* A single turn's cards inside a hand zone — horizontal mini fan */
+.historyFan {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 2px;
+}
+
+.historyFan > * {
+  margin-right: -8px;
+}
+
+.historyFan > *:last-child {
+  margin-right: 0;
+}
+
+/* Left player's history — rotated 90° to read naturally from that side */
+.historyFanLeft {
+  transform: rotate(90deg);
+}
+
+/* Right player's history — rotated -90° */
+.historyFanRight {
+  transform: rotate(-90deg);
+}
+
+.historyFanLeft,
+.historyFanRight {
+  margin-top: -8px;
+  margin-bottom: -8px;
 }

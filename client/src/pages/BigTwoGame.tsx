@@ -1,12 +1,14 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { DiscordSDK } from '@discord/embedded-app-sdk';
 import { useVoiceState } from '../hooks/useVoiceState';
 import { StatusBar } from '../components/StatusBar';
 import { SettingsMenu } from '../components/SettingsMenu';
 import { PlayerSide } from '../components/game/PlayerSide';
 import { Card as CardComponent } from '../components/game/Card';
-import { GAMES, SUITS, RANKS, type Card, type Player, type RoomState, type GameTurnState } from '../types';
+import { GAMES, SUITS, RANKS, type Card, type Player, type RoomState, type GameTurnState, type GameOverPayload, type VoteUpdatePayload, type VoteChoice } from '../types';
 import styles from '../styles/BigTwoGame.module.css';
+import { parseCombo, isError } from '../types/index';
+import { EndGameOverlay } from '../components/game/EndGameOverlay';
 
 // ─── Sort helpers ─────────────────────────────────────────────────────────────
 
@@ -35,16 +37,22 @@ type Props = {
   isConnected: boolean;
   hand: Card[];
   turnState: GameTurnState | null;
+  lastError: string | null;
+  gameOver: GameOverPayload | null;
+  voteUpdate: VoteUpdatePayload | null;
   playCards: (cards: Card[]) => void;
   pass: () => void;
+  clearError: () => void;
+  vote: (choice: VoteChoice) => void;
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnState, playCards, pass }: Props) {
+export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnState, lastError, gameOver, voteUpdate, clearError, playCards, pass, vote }: Props) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [displayHand,  setDisplayHand]  = useState<Card[] | null>(null);
+  const [playError, setPlayError] = useState<string | null>(null);
 
   const speaking    = useVoiceState(sdk);
   const gameInfo    = GAMES.find(g => g.id === roomState.selectedGame)!;
@@ -52,6 +60,21 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
 
   // Sync displayHand with incoming hand (preserve order if already sorted)
   const activeHand = displayHand ?? hand;
+  
+  useEffect(() => {
+    if (hand.length === 0) { 
+      setDisplayHand(null); 
+      return;
+    }
+    setDisplayHand(prev => {
+      if (prev === null) return hand;
+      const handSet = new Set(hand.map(cardKey));
+      const kept = prev.filter(c => handSet.has(cardKey(c)));
+      const keptKeys = new Set(kept.map(cardKey));
+      const extra = hand.filter(c => !keptKeys.has(cardKey(c)));
+      return [...kept, ...extra];
+    });
+  }, [hand]);
 
   const selfIndex = useMemo(
     () => { const i = gamePlayers.findIndex(p => p.userId === userId); return i === -1 ? 0 : i; },
@@ -73,9 +96,16 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
         ?? hand.length;
   }
 
+  function clearAllErrors(){
+    clearError();
+    setPlayError(null);
+  }
+
   // ── Card selection ─────────────────────────────────────────────────────────
   function toggleCard(card: Card) {
     if (!isMyTurn) return;
+    clearAllErrors();
+
     const key = cardKey(card);
     setSelectedKeys(prev => {
       const next = new Set(prev);
@@ -99,15 +129,26 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
   function handlePlay() {
     if (!isMyTurn || selectedKeys.size === 0) return;
     const toPlay = activeHand.filter(c => selectedKeys.has(cardKey(c)));
-    // Optimistically update display hand
-    const remaining = activeHand.filter(c => !selectedKeys.has(cardKey(c)));
-    setDisplayHand(remaining);
+    // Quick client-side check — catches obvious errors instantly
+    if (toPlay.length === 4 || toPlay.length > 5) {
+      setPlayError('Must play 1, 2, 3, or 5 cards');
+      return;
+    }
+    const combo = parseCombo(toPlay);
+    if (isError(combo)) {
+      setPlayError(combo.error);
+      return;
+    }
+
+    setPlayError(null);
     setSelectedKeys(new Set());
     playCards(toPlay);
   }
 
   function handlePass() {
     if (!isMyTurn) return;
+    clearAllErrors(); 
+
     setSelectedKeys(new Set());
     pass();
   }
@@ -119,21 +160,34 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
     // (noop — we already updated optimistically; just don't reset)
   }
 
-  const centerPile = turnState?.centerPile ?? [];
+  const cardsHistory = turnState?.centerPile ?? [];
+  const lastPlayedTurn = cardsHistory.at(-1) ?? null;
 
   // Turn label for each seat, rotated to face each player
-  function turnLabel(position: 'top' | 'bottom' | 'left' | 'right', player: Player) {
+  function turnLabel(player: Player) {
     if (turnState?.currentTurn !== player.userId) return null;
-    const rotations = { bottom: 0, right: 90, top: 180, left: 270 };
-    return (
-      <div
-        className={styles.turnLabel}
-        style={{ transform: `rotate(${rotations[position]}deg)` }}
-      >
-        Turn
-      </div>
-    );
+    // No rotation needed — each zone positions it via CSS
+    return <div className={styles.turnLabel}>Turn</div>;
   }
+
+  function playsFor(p: Player){
+    return cardsHistory.filter( t=>t.userId === p.userId);
+  }
+
+  // Derive the tip inside the component:
+  const lastPlayedCards = turnState?.centerPile.at(-1)?.cards ?? null;
+  const lastCardTip = useMemo((): string | null => {
+    if (!isMyTurn) return null;
+    if (!lastPlayedCards || lastPlayedCards.length !== 1) return null;
+
+    const nextPlayer = right;
+
+    const nextCount = turnState?.playerCardCounts
+      .find(c => c.userId === nextPlayer.userId)?.count ?? 0;
+
+    if (nextCount !== 1) return null;
+    return `${nextPlayer.displayName} is holding 1 card — play your largest to beat them!`;
+  }, [isMyTurn, lastPlayedCards, turnState, gamePlayers, userId]);
 
   return (
     <div className={styles.root}>
@@ -150,7 +204,7 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
 
         {/* Top opponent */}
         <div className={styles.topZone}>
-          {turnLabel('top', top)}
+          {turnLabel(top)}
           <PlayerSide 
             player={top} 
             position="top" 
@@ -163,7 +217,7 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
         {/* Middle row */}
         <div className={styles.middleRow}>
           <div className={styles.leftZone}>
-            {turnLabel('left', left)}
+            {turnLabel(left)}
             <PlayerSide 
               player={left} 
               position="left" 
@@ -177,15 +231,31 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
             <div className={styles.table}>
               <div className={styles.tableGrid}>
                 <div className={styles.corner} />
-                <div className={`${styles.handZone} ${styles.handTop}`} />
+                <div className={`${styles.handZone} ${styles.handTop}`}>
+                  {playsFor(top).map((turn, i)=> (
+                    <div key={i} className={styles.historyFan}>
+                      {turn.cards.map((c, j)=> (
+                        <CardComponent key={j} card={c} faceUp small />
+                      ))}
+                    </div>
+                  ))}
+                </div>
                 <div className={styles.corner} />
-                <div className={`${styles.handZone} ${styles.handLeft}`} />
+                <div className={`${styles.handZone} ${styles.handLeft}`}>
+                  {playsFor(left).map((turn, i) => (
+                    <div key={i} className={`${styles.historyFan} ${styles.historyFanLeft}`}>
+                      {turn.cards.map((c, j) => (
+                        <CardComponent key={j} card={c} faceUp small />
+                      ))}
+                    </div>
+                  ))}
+                </div>
 
                 {/* Center play area — shows last played cards */}
                 <div className={styles.centerZone}>
-                  {centerPile.length > 0 ? (
+                  {lastPlayedTurn ? (
                     <div className={styles.centerCards}>
-                      {centerPile.map((c, i) => (
+                      {lastPlayedTurn.cards.map((c, i) => (
                         <CardComponent key={i} card={c} faceUp />
                       ))}
                     </div>
@@ -197,16 +267,32 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
                   )}
                 </div>
 
-                <div className={`${styles.handZone} ${styles.handRight}`} />
+                <div className={`${styles.handZone} ${styles.handRight}`}>
+                  {playsFor(right).map((turn, i) => (
+                    <div key={i} className={`${styles.historyFan} ${styles.historyFanRight}`}>
+                      {turn.cards.map((c, j) => (
+                        <CardComponent key={j} card={c} faceUp small />
+                      ))}
+                    </div>
+                  ))}
+                </div>
                 <div className={styles.corner} />
-                <div className={`${styles.handZone} ${styles.handBottom}`} />
+                <div className={`${styles.handZone} ${styles.handBottom}`}>
+                  {playsFor(bottom).map((turn, i) => (
+                    <div key={i} className={styles.historyFan}>
+                      {turn.cards.map((c, j) => (
+                        <CardComponent key={j} card={c} faceUp small />
+                      ))}
+                    </div>
+                  ))}
+                </div>
                 <div className={styles.corner} />
               </div>
             </div>
           </div>
 
           <div className={styles.rightZone}>
-            {turnLabel('right', right)}
+            {turnLabel(right)}
             <PlayerSide 
               player={right} 
               position="right" 
@@ -220,70 +306,93 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
 
         {/* Bottom — self + controls */}
         <div className={styles.bottomZone}>
+          <div className={styles.bottomInner}>
+            <div className={styles.controlsRow}>
+              {/* Sort buttons — left of hand */}
+              <div className={styles.sortButtons}>
+                <button className={styles.actionBtn} onClick={handleSortSuit}>
+                  Sort by Suit
+                </button>
+                <button className={styles.actionBtn} onClick={handleSortRank}>
+                  Sort by Number
+                </button>
+              </div>
 
-          {/* Sort buttons — left of hand */}
-          <div className={styles.sortButtons}>
-            <button className={styles.actionBtn} onClick={handleSortSuit}>
-              Sort by Suit
-            </button>
-            <button className={styles.actionBtn} onClick={handleSortRank}>
-              Sort by Number
-            </button>
-          </div>
+              {/* Hand + turn label */}
+              <div className={styles.selfColumn}>
+                {turnLabel(bottom)}
+                <div className={styles.selfHand}>
+                  {activeHand.map((card) => {
+                    const key = cardKey(card);
+                    return (
+                      <div
+                        key={key}
+                        className={styles.selfCardWrap}
+                        onClick={() => toggleCard(card)}
+                      >
+                        <CardComponent
+                          card={card}
+                          faceUp
+                          selected={selectedKeys.has(key)}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className={styles.identity}>
+                  <PlayerSide 
+                    player={bottom} 
+                    position="bottom" 
+                    isSelf={true}
+                    isSpeaking={speaking.has(bottom.userId)} 
+                    avatarOnly 
+                  />
+                </div>
+              </div>
 
-          {/* Hand + turn label */}
-          <div className={styles.selfColumn}>
-            {turnLabel('bottom', bottom)}
-            <div className={styles.selfHand}>
-              {activeHand.map((card) => {
-                const key = cardKey(card);
-                return (
-                  <div
-                    key={key}
-                    className={styles.selfCardWrap}
-                    onClick={() => toggleCard(card)}
-                  >
-                    <CardComponent
-                      card={card}
-                      faceUp
-                      selected={selectedKeys.has(key)}
-                    />
-                  </div>
-                );
-              })}
+              {/* Play/Pass buttons — right of hand */}
+              <div className={styles.playButtons}>
+                <button
+                  className={`${styles.actionBtn} ${styles.playBtn}`}
+                  onClick={handlePlay}
+                  disabled={!isMyTurn || selectedKeys.size === 0}
+                >
+                  Play
+                </button>
+                <button
+                  className={`${styles.actionBtn} ${styles.passBtn}`}
+                  onClick={handlePass}
+                  disabled={!isMyTurn}
+                >
+                  Pass
+                </button>
+              </div>
             </div>
-            <div className={styles.identity}>
-              <PlayerSide 
-                player={bottom} 
-                position="bottom" 
-                isSelf={true}
-                isSpeaking={speaking.has(bottom.userId)} 
-                avatarOnly 
-              />
-            </div>
-          </div>
 
-          {/* Play/Pass buttons — right of hand */}
-          <div className={styles.playButtons}>
-            <button
-              className={`${styles.actionBtn} ${styles.playBtn}`}
-              onClick={handlePlay}
-              disabled={!isMyTurn || selectedKeys.size === 0}
-            >
-              Play
-            </button>
-            <button
-              className={`${styles.actionBtn} ${styles.passBtn}`}
-              onClick={handlePass}
-              disabled={!isMyTurn}
-            >
-              Pass
-            </button>
+            {(playError || lastError) && (
+              <div className={styles.errorRow}>
+                {playError && <span className={styles.playError}>{playError}</span>}
+                {lastError && <span className={styles.playError}>{lastError}</span>}
+              </div>
+            )}
+            {lastCardTip && (
+              <span className={styles.lastCardTip}>{lastCardTip}</span>
+            )}
           </div>
 
         </div>
 
       </div>
+
+      {gameOver && voteUpdate && (
+        <EndGameOverlay
+          gameOver={gameOver}
+          voteUpdate={voteUpdate}
+          gamePlayers={gamePlayers}
+          userId={userId}
+          onVote={vote}
+        />
+      )}
 
       <SettingsMenu
         isOpen={settingsOpen}

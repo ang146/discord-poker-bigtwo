@@ -72,6 +72,7 @@ export interface HumanPlayer extends BasePlayer {
 export interface BotPlayer extends BasePlayer {
   type: "bot";
   botId: string;
+  level: BotLevel;
 }
 
 export type Player = HumanPlayer | BotPlayer;
@@ -82,20 +83,17 @@ export type RoomPhase = "lobby" | "inGame";
 
 export type RoomState = {
   roomId: string;
-  /** Users present but not seated */
   spectators: Player[];
-  /** Human players seated at the table */
   players: Player[];
-  /**
-   * Final seat order including bots — populated when game starts.
-   * Null during lobby. Clients use this for in-game rendering.
-   */
   gamePlayers: Player[] | null;
   selectedGame: GameId;
   hostUserId: string;
   botsEnabled: boolean;
   phase: RoomPhase;
+  lastWinnerUserId: string | null;
 };
+
+export type BotLevel = "easy";
 
 // ─── Socket payloads ─────────────────────────────────────────────────────────
 
@@ -109,12 +107,14 @@ export type GameHandPayload = {
 
 // ─── In-game turn state (broadcast to all clients) ───────────────────────────
 
+export type PlayedTurn = {
+  userId: string;
+  cards: Card[];
+};
+
 export type GameTurnState = {
-  /** userId of the player whose turn it is */
   currentTurn: string;
-  /** Cards on the center pile (last played) */
-  centerPile: Card[];
-  /** How many cards each player still holds */
+  centerPile: PlayedTurn[];
   playerCardCounts: { userId: string; count: number }[];
 };
 
@@ -123,4 +123,24 @@ export type GameTurnState = {
 export type PlayCardsPayload = {
   roomId: string;
   cards: Card[];
+};
+
+// Game Ended Voting
+
+export type VoteChoice = "rematch" | "leave";
+
+export type PlayerVote = {
+  userId: string;
+  choice: VoteChoice | null; // null = not voted yet
+};
+
+export type GameOverPayload = {
+  winnerUserId: string;
+  votes: PlayerVote[];
+  timeoutSeconds: number;
+};
+
+export type VoteUpdatePayload = {
+  votes: PlayerVote[];
+  timeoutSeconds: number; // remaining seconds
 };
