@@ -27,7 +27,7 @@ export default defineConfig({
     hmr: {
       clientPort: 443,
     },
-    allowedHosts: ["activity.icytalenty.uk"],
+    allowedHosts: true,
   },
   logLevel: 'info',
   plugins: [react()],
