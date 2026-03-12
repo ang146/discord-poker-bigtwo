@@ -23,6 +23,17 @@ function highest(cards: Card[]): Card {
   return sortCards(cards).at(-1)!;
 }
 
+function highestStraight(cards: Card[]): Card {
+  const sorted = sortCards(cards);
+  const lastCard = sorted.at(-1)!;
+  const secondLastCard = sorted.at(-2)!;
+  if (lastCard.rank === "2") {
+    if (secondLastCard.rank === "A") return sorted.at(-3)!;
+    return secondLastCard;
+  }
+  return lastCard;
+}
+
 /** Compare two cards: positive if a > b */
 function compareCards(a: Card, b: Card): number {
   const rd = rankIndex(a.rank) - rankIndex(b.rank);
@@ -82,14 +93,11 @@ export function isError(r: ParseResult): r is ParseError {
  */
 const STRAIGHT_WINDOWS: Rank[][] = (() => {
   const windows: Rank[][] = [];
-  // Standard consecutive windows within RANKS (index 0..12)
   for (let i = 0; i <= RANKS.length - 5; i++) {
     windows.push(RANKS.slice(i, i + 5));
   }
-  // Wrap-around: A-2-3-4-5 and 2-3-4-5-6 already covered above
-  // because 2 is at index 12, so window [8..12] = 10,J,Q,K,A and [9..13] would be 10-J-Q-K-A-2
-  // Actually 2 is last, so A-2-3-4-5 needs special treatment:
-  windows.push(["A", "2", "3", "4", "5"]); // wrap: A(idx12→treated as before 3)
+  windows.push(["A", "2", "3", "4", "5"]);
+  windows.push(["2", "3", "4", "5", "6"]);
   return windows;
 })();
 
@@ -107,7 +115,7 @@ function detectStraight(sorted: Card[]): Card | null {
       // High card = highest rank in the window, then highest suit among tied ranks
       const windowSet = new Set(window);
       const inWindow = sorted.filter((c) => windowSet.has(c.rank));
-      return highest(inWindow);
+      return highestStraight(inWindow);
     }
   }
   return null;

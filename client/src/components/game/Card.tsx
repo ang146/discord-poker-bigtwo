@@ -5,8 +5,10 @@ type Props = {
   card?: CardType;
   faceUp?: boolean;
   selected?: boolean;
-  /** Use compact size for opponent face-down fans */
+  /** Use compact size for opponent history fans */
   small?: boolean;
+  /** Use large size for self hand */
+  large?: boolean;
 };
 
 const RED_SUITS = new Set(['♥', '♦']);
@@ -14,8 +16,8 @@ const RED_SUITS = new Set(['♥', '♦']);
 /** Ranks that need underline to distinguish from their 180° rotation */
 const UNDERLINED_RANKS = new Set(['6', '9']);
 
-export function Card({ card, faceUp = true, selected = false, small = false }: Props) {
-  const sizeClass = small ? styles.small : '';
+export function Card({ card, faceUp = true, selected = false, small = false, large = false }: Props) {
+  const sizeClass = small ? styles.small : large ? styles.large : '';
 
   // ── Face down ──────────────────────────────────────────────────────────────
   if (!faceUp || !card) {

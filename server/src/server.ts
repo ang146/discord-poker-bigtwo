@@ -325,6 +325,7 @@ function startRematch(roomId: string): void {
   gameSessions.set(roomId, session);
   broadcast(roomId);
   broadcastHands(roomId, session, gamePlayers);
+  io.to(roomId).emit('game:rematch');   // tells clients to clear game-over state
   broadcastTurn(roomId, session);
   scheduleBotTurn(roomId);
 }
@@ -725,7 +726,7 @@ io.on("connection", (socket) => {
       return player?.type === "bot" || v !== null;
     });
 
-    if (allVoted) resolveVotes(roomId, false);
+    if (allVoted) setTimeout(() => resolveVotes(roomId, false), 800);
   });
 
   socket.on("disconnecting", () => {

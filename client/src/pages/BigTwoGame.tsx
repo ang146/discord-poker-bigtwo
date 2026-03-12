@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import type { DiscordSDK } from '@discord/embedded-app-sdk';
 import { useVoiceState } from '../hooks/useVoiceState';
 import { StatusBar } from '../components/StatusBar';
@@ -52,7 +52,11 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [displayHand,  setDisplayHand]  = useState<Card[] | null>(null);
-  const [playError, setPlayError] = useState<string | null>(null);
+  const [playError,    setPlayError]    = useState<string | null>(null);
+  // userId of the player whose "Pass!" bubble is currently showing
+  const [passingPlayer, setPassingPlayer] = useState<string | null>(null);
+  const passKeyRef     = useRef(0); // increments each pass to force animation remount
+  const [passKey,      setPassKey]      = useState(0);
 
   const speaking    = useVoiceState(sdk);
   const gameInfo    = GAMES.find(g => g.id === roomState.selectedGame)!;
@@ -153,21 +157,71 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
     pass();
   }
 
-  // When a new hand arrives from server, reset display hand
-  // (we compare lengths as a simple heuristic)
-  if (displayHand !== null && hand.length !== displayHand.length && hand.length < displayHand.length) {
-    // server confirmed; keep our display order but refresh with server truth
-    // (noop — we already updated optimistically; just don't reset)
-  }
+  // Delay showing the voting overlay so the winning play is visible first
+  const [showOverlay, setShowOverlay] = useState(false);
+  useEffect(() => {
+    if (!gameOver) { setShowOverlay(false); return; }
+    const t = setTimeout(() => setShowOverlay(true), 2500);
+    return () => clearTimeout(t);
+  }, [gameOver]);
 
-  const cardsHistory = turnState?.centerPile ?? [];
+  const cardsHistory   = turnState?.centerPile ?? [];
   const lastPlayedTurn = cardsHistory.at(-1) ?? null;
 
-  // Turn label for each seat, rotated to face each player
+  const prevTurnRef    = useRef<string | null>(null);
+  const prevPileLenRef = useRef<number>(0);
+
+  // Reset pass tracking when a new game starts (gameOver clears = rematch)
+  useEffect(() => {
+    if (!gameOver) {
+      prevTurnRef.current    = null;
+      prevPileLenRef.current = 0;
+      setPassingPlayer(null);
+    }
+  }, [gameOver]);
+
+  useEffect(() => {
+    const cur     = turnState?.currentTurn ?? null;
+    const pileLen = cardsHistory.length;
+
+    const prevTurn = prevTurnRef.current;
+    const prevLen  = prevPileLenRef.current;
+
+    // Always update refs first
+    prevTurnRef.current    = cur;
+    prevPileLenRef.current = pileLen;
+
+    // Only show bubble if: turn actually changed, pile didn't grow, and
+    // we're not in a game-over state (avoids spurious bubbles at round end)
+    if (
+      prevTurn !== null &&
+      cur !== null &&
+      prevTurn !== cur &&
+      pileLen === prevLen &&
+      !gameOver
+    ) {
+      const passer = prevTurn;
+      const key = ++passKeyRef.current;
+      setPassingPlayer(passer);
+      setPassKey(key);
+      const t = setTimeout(() => {
+        setPassingPlayer(p => p === passer ? null : p);
+      }, 2500);
+      return () => clearTimeout(t);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [turnState?.currentTurn, cardsHistory.length]);
+
+  // Turn label
   function turnLabel(player: Player) {
     if (turnState?.currentTurn !== player.userId) return null;
-    // No rotation needed — each zone positions it via CSS
-    return <div className={styles.turnLabel}>Turn</div>;
+    return <div className={styles.turnLabel}>TURN</div>;
+  }
+
+  // Pass bubble — absolute positioned, doesn't affect layout
+  function passBubble(player: Player) {
+    if (passingPlayer !== player.userId) return null;
+    return <div key={passKey} className={styles.passBubble}>Pass!</div>;
   }
 
   function playsFor(p: Player){
@@ -205,6 +259,7 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
         {/* Top opponent */}
         <div className={styles.topZone}>
           {turnLabel(top)}
+          {passBubble(top)}
           <PlayerSide 
             player={top} 
             position="top" 
@@ -218,6 +273,7 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
         <div className={styles.middleRow}>
           <div className={styles.leftZone}>
             {turnLabel(left)}
+            {passBubble(left)}
             <PlayerSide 
               player={left} 
               position="left" 
@@ -253,6 +309,9 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
 
                 {/* Center play area — shows last played cards */}
                 <div className={styles.centerZone}>
+                  {isMyTurn && (
+                    <div className={styles.yourTurnBanner}>Your Turn</div>
+                  )}
                   {lastPlayedTurn ? (
                     <div className={styles.centerCards}>
                       {lastPlayedTurn.cards.map((c, i) => (
@@ -293,6 +352,7 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
 
           <div className={styles.rightZone}>
             {turnLabel(right)}
+            {passBubble(right)}
             <PlayerSide 
               player={right} 
               position="right" 
@@ -321,6 +381,7 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
               {/* Hand + turn label */}
               <div className={styles.selfColumn}>
                 {turnLabel(bottom)}
+                {passBubble(bottom)}
                 <div className={styles.selfHand}>
                   {activeHand.map((card) => {
                     const key = cardKey(card);
@@ -333,6 +394,7 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
                         <CardComponent
                           card={card}
                           faceUp
+                          large
                           selected={selectedKeys.has(key)}
                         />
                       </div>
@@ -384,7 +446,7 @@ export function BigTwoGame({ sdk, userId, roomState, isConnected, hand, turnStat
 
       </div>
 
-      {gameOver && voteUpdate && (
+      {showOverlay && gameOver && voteUpdate && (
         <EndGameOverlay
           gameOver={gameOver}
           voteUpdate={voteUpdate}

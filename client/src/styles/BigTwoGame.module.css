@@ -207,58 +207,147 @@
 /* ── Turn label ── */
 .turnLabel {
   position: absolute;
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(10px, 1.4vw, 14px);
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: clamp(9px, 1.1vw, 11px);
   font-weight: 700;
-  font-style: italic;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: #d4af6e;
-  letter-spacing: 0.08em;
-  text-shadow: 0 0 12px rgba(212, 175, 110, 0.6), 0 1px 4px rgba(0,0,0,0.8);
+  background: rgba(10, 14, 8, 0.88);
+  border: 1px solid rgba(212, 175, 110, 0.6);
+  border-radius: 4px;
+  padding: 3px 9px;
   pointer-events: none;
   white-space: nowrap;
+  z-index: 10;
   animation: turnPulse 1.4s ease-in-out infinite alternate;
-
-  /* Default position — override per-zone below */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
-/* Sits below the top player, above the table */
 .topZone .turnLabel {
+  bottom: -28px;
   top: auto;
-  bottom: -20px;
   left: 50%;
   transform: translateX(-50%);
 }
 
-/* Sits to the right of the left player, toward the table */
+/* Rotated so text reads vertically, pointing toward the table */
 .leftZone .turnLabel {
   top: 50%;
   left: auto;
-  right: -36px;
-  transform: translateY(-50%);
+  right: -44px;
+  transform: translateY(-50%) rotate(-90deg);
 }
 
-/* Sits to the left of the right player, toward the table */
 .rightZone .turnLabel {
   top: 50%;
-  left: -36px;
   right: auto;
-  transform: translateY(-50%);
+  left: -44px;
+  transform: translateY(-50%) rotate(90deg);
 }
 
-/* Sits above the bottom player (self), below the table */
 .bottomZone .turnLabel {
+  top: -28px;
   bottom: auto;
-  top: -20px;
   left: 50%;
   transform: translateX(-50%);
 }
 
 @keyframes turnPulse {
-  from { opacity: 0.7; }
-  to   { opacity: 1;   }
+  from { opacity: 0.6; box-shadow: 0 0 4px rgba(212,175,110,0.15); }
+  to   { opacity: 1;   box-shadow: 0 0 12px rgba(212,175,110,0.45); }
+}
+
+/* ── Pass bubble ── */
+.passBubble {
+  position: absolute;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(11px, 1.3vw, 14px);
+  font-weight: 700;
+  font-style: italic;
+  color: #e8dcc8;
+  background: rgba(20, 20, 20, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 4px 12px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 10;
+  /* left/right zones keep their own transform, top/bottom override below */
+  animation: bubbleFadeCenter 2s ease forwards;
+}
+
+/* Tail triangle */
+.passBubble::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+
+/* top zone — bubble sits below avatar, tail points up */
+.topZone .passBubble {
+  bottom: -44px;
+  top: auto;
+  left: 50%;
+  animation: bubbleFadeTop 2s ease forwards;
+}
+.topZone .passBubble::before {
+  top: -6px;
+  bottom: auto;
+  border-bottom: 6px solid rgba(255,255,255,0.18);
+  border-top: none;
+}
+
+/* left zone — bubble floats right of avatar */
+.leftZone .passBubble {
+  top: 50%;
+  left: auto;
+  right: -76px;
+  transform: translateY(-50%);
+  animation: bubbleFadeSide 2s ease forwards;
+}
+.leftZone .passBubble::before { display: none; }
+
+/* right zone — bubble floats left of avatar */
+.rightZone .passBubble {
+  top: 50%;
+  right: auto;
+  left: -76px;
+  transform: translateY(-50%);
+  animation: bubbleFadeSide 2s ease forwards;
+}
+.rightZone .passBubble::before { display: none; }
+
+/* bottom zone — bubble sits above, tail points down */
+.bottomZone .passBubble {
+  top: -44px;
+  bottom: auto;
+  left: 50%;
+  animation: bubbleFadeTop 2s ease forwards;
+}
+.bottomZone .passBubble::before {
+  bottom: -6px;
+  top: auto;
+  border-top: 6px solid rgba(255,255,255,0.18);
+  border-bottom: none;
+}
+
+@keyframes bubbleFadeTop {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(4px);  }
+  12%  { opacity: 1; transform: translateX(-50%) translateY(0);     }
+  70%  { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-3px);  }
+}
+@keyframes bubbleFadeSide {
+  0%   { opacity: 0; }
+  12%  { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes bubbleFadeCenter {
+  0%   { opacity: 0; } 12% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; }
 }
 
 /* ── Self bottom zone ── */
@@ -407,4 +496,29 @@
 .historyFanRight {
   margin-top: -8px;
   margin-bottom: -8px;
+}
+/* ── "Your Turn" banner inside the center zone ── */
+.yourTurnBanner {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(14px, 2vw, 22px);
+  font-weight: 700;
+  font-style: italic;
+  color: #d4af6e;
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-shadow:
+    0 0 20px rgba(212, 175, 110, 0.7),
+    0 2px 6px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+  animation: yourTurnPulse 0.9s ease-in-out infinite alternate;
+  /* sits above the cards row without pushing them — absolute within centerZone */
+  width: 100%;
+  padding-bottom: 4px;
+  position: absolute;
+  top: 28%;
+}
+
+@keyframes yourTurnPulse {
+  from { opacity: 0.75; transform: scale(0.98); }
+  to   { opacity: 1;    transform: scale(1.02); }
 }

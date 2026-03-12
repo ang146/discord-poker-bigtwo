@@ -94,6 +94,10 @@ export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
       setGameOver(null);
       setVoteUpdate(null);
     }
+    function onRematch() {
+      setGameOver(null);
+      setVoteUpdate(null);
+    }
 
     if (socket.connected) join();
     socket.on("connect", join);
@@ -107,6 +111,7 @@ export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
     socket.on("game:over", onGameOver);
     socket.on("game:vote:update", onVoteUpdate);
     socket.on("game:return-lobby", onReturnLobby);
+    socket.on("game:rematch", onRematch);
 
     return () => {
       socket.off("connect", join);
@@ -120,6 +125,7 @@ export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
       socket.off("game:over", onGameOver);
       socket.off("game:vote:update", onVoteUpdate);
       socket.off("game:return-lobby", onReturnLobby);
+      socket.off("game:rematch", onRematch);
     };
   }, [roomId, player.userId]); // eslint-disable-line react-hooks/exhaustive-deps
 

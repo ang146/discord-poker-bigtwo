@@ -117,3 +117,20 @@
 .small .suitCenter {
   font-size: clamp(10px, 1.4vw, 15px);
 }
+
+/* ── Large size (self hand) ── */
+.large {
+  width:  var(--card-w-lg, clamp(46px, 5.8vw, 66px));
+  height: var(--card-h-lg, clamp(65px, 8.2vw, 93px));
+}
+
+.large .rank {
+  font-size: clamp(10px, 1.4vw, 15px);
+}
+
+.large .rankTL { top: 6px;  left: 7px;  }
+.large .rankBR { bottom: 6px; right: 7px; }
+
+.large .suitCenter {
+  font-size: clamp(20px, 3vw, 36px);
+}

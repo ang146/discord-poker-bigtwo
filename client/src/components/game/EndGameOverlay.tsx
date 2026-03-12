@@ -26,18 +26,20 @@ export function EndGameOverlay({ gameOver, voteUpdate, gamePlayers, userId, onVo
   }, [timeLeft]);
 
   function handleVote(choice: VoteChoice) {
-    if (myVote) return;
+    if (myVote !== null) return;
     setMyVote(choice);
     onVote(choice);
   }
 
-  const winner = gamePlayers.find(p => p.userId === gameOver.winnerUserId);
+  const isResolving = timeLeft <= 0;
 
   return (
     <div className={styles.backdrop}>
       <div className={styles.panel}>
 
-        <div className={styles.timer}>{timeLeft}s</div>
+        <div className={styles.timer}>
+          {isResolving ? 'Resolving…' : `${timeLeft}s`}
+        </div>
 
         <div className={styles.players}>
           {gamePlayers.map(player => {
@@ -65,8 +67,7 @@ export function EndGameOverlay({ gameOver, voteUpdate, gamePlayers, userId, onVo
           })}
         </div>
 
-        {/* Own vote buttons — only show if haven't voted */}
-        {!myVote ? (
+        {!myVote && !isResolving ? (
           <div className={styles.buttons}>
             <button className={`${styles.btn} ${styles.rematchBtn}`} onClick={() => handleVote('rematch')}>
               Keep Going
@@ -77,7 +78,7 @@ export function EndGameOverlay({ gameOver, voteUpdate, gamePlayers, userId, onVo
           </div>
         ) : (
           <div className={styles.voted}>
-            Waiting for others…
+            {isResolving ? 'Please wait…' : 'Waiting for others…'}
           </div>
         )}
 

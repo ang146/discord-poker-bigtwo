@@ -151,3 +151,7 @@
   color: rgba(255, 255, 255, 0.4);
   letter-spacing: 0.1em;
 }
+.timerResolving {
+  color: rgba(255, 255, 255, 0.25);
+  font-style: italic;
+}
