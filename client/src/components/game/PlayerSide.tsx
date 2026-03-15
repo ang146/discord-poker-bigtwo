@@ -11,7 +11,6 @@ type Props = {
   isSpeaking: boolean;
   hand?: CardType[];
   cardCount?: number;
-  /** Render avatar+name only — hand rendering handled externally (self/bottom) */
   avatarOnly?: boolean;
 };
 
@@ -42,12 +41,8 @@ export function PlayerSide({ player, position, isSelf, isSpeaking, hand, cardCou
         style={{ '--c': colour } as React.CSSProperties}
       >
         {isBot ? (
-          <img 
-            src="/bot.png" 
-            alt="Bot" 
-            className={styles.img}
-            onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} 
-          />
+          <img src="/bot.png" alt="Bot" className={styles.img}
+            onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
         ) : player.avatarUrl ? (
           <img src={player.avatarUrl} alt={player.displayName} className={styles.img} />
         ) : (
@@ -58,28 +53,25 @@ export function PlayerSide({ player, position, isSelf, isSpeaking, hand, cardCou
     </div>
   );
 
-  const name = (
-    <span className={styles.name}>
-      {player.displayName}
-      {isSelf && <span className={styles.you}> (you)</span>}
-    </span>
-  );
-
   const identity = (
     <div className={styles.identity}>
       {avatar}
-      {name}
+      <span className={styles.cardCount}>{count}</span>
     </div>
   );
 
-  // avatarOnly mode: used by BigTwoGame bottom zone where hand is rendered externally
   if (avatarOnly) return identity;
 
+  // Opponent face-down fan — large cards with tight overlap
+  // Outer wrapper gives the rotated strip a fixed layout footprint.
+  // Opponent card: ~96px wide, ~138px tall at max.
+  // 13 cards with -76px overlap = 13*96 - 12*76 = 1248 - 912 = 336px fan width, ~138px tall.
+  // After 90° rotation: layout width = 138px, layout height = 336px.
   const sideHand = (
     <div className={styles.sideHandOuter}>
       <div className={`${styles.sideHandInner} ${position === 'right' ? styles.rotateRight : styles.rotateLeft}`}>
         {Array.from({ length: count }, (_, i) => (
-          <Card key={i} faceUp={false} small />
+          <Card key={i} faceUp={false} opponent />
         ))}
       </div>
     </div>
@@ -88,8 +80,8 @@ export function PlayerSide({ player, position, isSelf, isSpeaking, hand, cardCou
   if (position === 'left') {
     return (
       <div className={`${styles.wrap} ${styles.left}`}>
-        {identity}
         {sideHand}
+        {identity}
       </div>
     );
   }
@@ -97,8 +89,8 @@ export function PlayerSide({ player, position, isSelf, isSpeaking, hand, cardCou
   if (position === 'right') {
     return (
       <div className={`${styles.wrap} ${styles.right}`}>
-        {identity}
         {sideHand}
+        {identity}
       </div>
     );
   }
@@ -106,20 +98,17 @@ export function PlayerSide({ player, position, isSelf, isSpeaking, hand, cardCou
   if (position === 'top') {
     return (
       <div className={`${styles.wrap} ${styles.top}`}>
-        {identity}
         <div className={styles.handRowFaceDown}>
-          {Array.from({ length: count }, (_, i) => <Card key={i} faceUp={false} small />)}
+          {Array.from({ length: count }, (_, i) => <Card key={i} faceUp={false} opponent />)}
         </div>
+        {identity}
       </div>
     );
   }
 
-  // bottom — legacy (not used when avatarOnly)
+  // bottom fallback
   return (
     <div className={`${styles.wrap} ${styles.bottom}`}>
-      <div className={styles.handRowFaceUp}>
-        {(hand ?? []).map((c, i) => <Card key={i} card={c} faceUp />)}
-      </div>
       {identity}
     </div>
   );
