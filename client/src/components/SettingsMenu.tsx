@@ -1,18 +1,26 @@
 import { useEffect, useRef } from 'react';
-import { GAMES, type GameId } from '../types';
+import { GAMES, type GameId, type BotLevel } from '../types';
 import styles from '../styles/SettingsMenu.module.css';
 
 type Props = {
   isOpen: boolean;
   selectedGame: GameId;
   botsEnabled?: boolean;
+  botLevel?: BotLevel;
   isHost?: boolean;
   onSelectGame: (game: GameId) => void;
   onToggleBots?: (enabled: boolean) => void;
+  onSetBotLevel?: (level: BotLevel) => void;
   onClose: () => void;
 };
 
-export function SettingsMenu({ isOpen, selectedGame, botsEnabled = false, isHost = false, onSelectGame, onToggleBots, onClose }: Props) {
+const BOT_LEVELS: { value: BotLevel; label: string; desc: string }[] = [
+  { value: 'easy',   label: 'Easy',   desc: 'Plays smallest valid move' },
+  { value: 'normal', label: 'Normal', desc: 'Prefers combos, reads opponent counts' },
+  { value: 'hard',   label: 'Hard',   desc: 'Tracks history, hoards 2s, blocks' },
+];
+
+export function SettingsMenu({ isOpen, selectedGame, botsEnabled = false, botLevel = 'easy', isHost = false, onSelectGame, onToggleBots, onSetBotLevel, onClose }: Props) {
   const panelRef = useRef<HTMLDivElement>(null);
 
   // Close on outside click
@@ -98,6 +106,21 @@ export function SettingsMenu({ isOpen, selectedGame, botsEnabled = false, isHost
                 <div className={styles.toggleThumb} />
               </div>
             </button>
+
+            {botsEnabled && onSetBotLevel && (
+              <div className={styles.levelRow}>
+                {BOT_LEVELS.map(({ value, label, desc }) => (
+                  <button
+                    key={value}
+                    className={`${styles.levelOption} ${botLevel === value ? styles.levelOptionSelected : ''}`}
+                    onClick={() => onSetBotLevel(value)}
+                  >
+                    <span className={styles.levelLabel}>{label}</span>
+                    <span className={styles.levelDesc}>{desc}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

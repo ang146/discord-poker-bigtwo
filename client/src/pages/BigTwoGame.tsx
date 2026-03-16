@@ -164,7 +164,8 @@ export function BigTwoGame({
 
   // ── Pass detection ────────────────────────────────────────────────────────
   const cardsHistory   = turnState?.centerPile ?? [];
-  const lastPlayedTurn = cardsHistory.at(-1) ?? null;
+  const isFreeTurn = turnState?.freeTurn ?? false;
+  const lastPlayedTurn = !isFreeTurn ? cardsHistory.at(-1) ?? null : null;
 
   const prevTurnRef    = useRef<string | null>(null);
   const prevPileLenRef = useRef<number>(0);

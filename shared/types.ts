@@ -89,11 +89,12 @@ export type RoomState = {
   selectedGame: GameId;
   hostUserId: string;
   botsEnabled: boolean;
+  botLevel: BotLevel;
   phase: RoomPhase;
   lastWinnerUserId: string | null;
 };
 
-export type BotLevel = 'easy' | 'normal' | 'hard';
+export type BotLevel = "easy" | "normal" | "hard";
 
 // ─── Socket payloads ─────────────────────────────────────────────────────────
 
@@ -116,6 +117,7 @@ export type GameTurnState = {
   currentTurn: string;
   centerPile: PlayedTurn[];
   playerCardCounts: { userId: string; count: number }[];
+  freeTurn: boolean;
 };
 
 // ─── Socket payloads (game actions) ─────────────────────────────────────────

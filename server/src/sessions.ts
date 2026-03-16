@@ -56,8 +56,9 @@ export function deal(players: Player[]): Map<string, Card[]> {
     players.forEach((p, i) => {
       const playerHands = deck.slice(i * 13, (i + 1) * 13);
       handsValid =
-        playerHands.filter((c) => c.rank === "A" || c.rank === "2").length >
-          0 ||
+        (handsValid &&
+          playerHands.filter((c) => c.rank === "A" || c.rank === "2").length >
+            0) ||
         playerHands.filter(
           (c) => c.rank === "J" || c.rank === "Q" || c.rank === "K",
         ).length > 2;
@@ -81,6 +82,7 @@ export function broadcastTurn(
       userId: uid,
       count: session.hands.get(uid)?.length ?? 0,
     })),
+    freeTurn: session.freeTurn,
   };
   io.to(roomId).emit("game:turn", state);
 }

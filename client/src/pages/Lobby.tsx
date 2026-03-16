@@ -29,7 +29,7 @@ export function LobbyPage({ sdk, userId, displayName, avatarUrl, instanceId }: P
 
   const {
     roomState, hand, turnState, connectionError, isConnected, lastError, gameOver, voteUpdate,
-    clearError, sitDown, standUp, setReady, setGame, setBots, transferHost, startGame, playCards, pass, vote,
+    clearError, sitDown, standUp, setReady, setGame, setBots, setBotLevel, transferHost, startGame, playCards, pass, vote,
   } = useRoom({ roomId: instanceId, player: selfAsPlayer });
 
   const speaking = useVoiceState(sdk);
@@ -61,6 +61,7 @@ export function LobbyPage({ sdk, userId, displayName, avatarUrl, instanceId }: P
   const selectedGame = roomState?.selectedGame ?? 'big-two';
   const hostUserId   = roomState?.hostUserId   ?? '';
   const botsEnabled  = roomState?.botsEnabled  ?? true;
+  const botLevel     = roomState?.botLevel     ?? 'easy';
   const gameInfo     = GAMES.find(g => g.id === selectedGame)!;
   const maxPlayers   = gameInfo.maxPlayers;
 
@@ -137,6 +138,11 @@ export function LobbyPage({ sdk, userId, displayName, avatarUrl, instanceId }: P
         <header className={styles.header}>
           <p className={styles.gameLabel}>Waiting Room</p>
           <h1 className={styles.gameTitle}>{gameInfo.name}</h1>
+          {botsEnabled && (
+            <p className={styles.botLevelLabel}>
+              Bot level: {botLevel.charAt(0).toUpperCase() + botLevel.slice(1)}
+            </p>
+          )}
           <p className={styles.statusLine}>{statusMsg()}</p>
         </header>
 
@@ -204,9 +210,11 @@ export function LobbyPage({ sdk, userId, displayName, avatarUrl, instanceId }: P
         isOpen={settingsOpen}
         selectedGame={selectedGame}
         botsEnabled={botsEnabled}
+        botLevel={botLevel}
         isHost={isSelfHost}
         onSelectGame={(game) => { setGame(game); setSettingsOpen(false); }}
         onToggleBots={setBots}
+        onSetBotLevel={setBotLevel}
         onClose={() => setSettingsOpen(false)}
       />
     </div>
