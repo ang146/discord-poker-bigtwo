@@ -4,45 +4,32 @@
   align-items: center;
 }
 
-/* Top: column — identity then hand points down toward table */
-.top {
-  flex-direction: column;
-  gap: 6px;
-}
+.top    { flex-direction: column; gap: 4px; }
+.bottom { flex-direction: column; gap: 4px; }
 
-/* Bottom: column reversed — hand first (toward table), identity below */
-.bottom {
-  flex-direction: column;
-  gap: 6px;
-}
-
-/* Left/Right: row — avatar beside vertical hand strip */
 .left,
 .right {
   flex-direction: row;
-  gap: 6px;
+  gap: 4px;
   align-items: center;
-  transform: rotate(90);
 }
 
-.right {
-  flex-direction: row-reverse;
-}
+.right { flex-direction: row-reverse; }
 
-/* ── Avatar + name stack ── */
+/* ── Identity ── */
 .identity {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   flex-shrink: 0;
 }
 
-/* ── Avatar ── */
+/* ── Avatar — Mobile base ── */
 .avatarWrap {
   position: relative;
-  width: clamp(32px, 4vw, 48px);
-  height: clamp(32px, 4vw, 48px);
+  width: 28px;
+  height: 28px;
   flex-shrink: 0;
 }
 
@@ -62,8 +49,8 @@
 
 .avatarSelf {
   box-shadow:
-    0 0 0 2.5px #d4af6e,
-    0 0 0 5px rgba(212, 175, 110, 0.2),
+    0 0 0 2px #d4af6e,
+    0 0 0 4px rgba(212, 175, 110, 0.2),
     0 3px 14px rgba(0, 0, 0, 0.55);
 }
 
@@ -76,7 +63,7 @@
 
 .initials {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(11px, 1.8vw, 16px);
+  font-size: 10px;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.9);
   user-select: none;
@@ -84,23 +71,23 @@
 
 .speakRing {
   position: absolute;
-  inset: -4px;
+  inset: -3px;
   border-radius: 50%;
-  border: 2.5px solid #4ade80;
-  box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+  border: 2px solid #4ade80;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
   pointer-events: none;
   animation: speakPulse 0.85s ease-in-out infinite alternate;
 }
 
 @keyframes speakPulse {
-  from { opacity: 0.6; transform: scale(1);    }
+  from { opacity: 0.6; transform: scale(1); }
   to   { opacity: 1;   transform: scale(1.04); }
 }
 
-/* ── Card count below avatar ── */
+/* ── Card count ── */
 .cardCount {
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: clamp(9px, 1.2vw, 13px);
+  font-size: 9px;
   font-weight: 700;
   color: #e8dcc8;
   text-align: center;
@@ -108,64 +95,23 @@
   letter-spacing: 0.05em;
 }
 
-/* ── Hand rows ── */
-
-/* Self — face-up fan, overlapping toward left */
-.handRowFaceUp {
-  display: flex;
-  flex-direction: row;
-  /* Each card except the last overlaps the next by 30px */
-  gap: 0;
-}
-
-.handRowFaceUp > * {
-  margin-right: clamp(-32px, -4.5vw, -20px);
-  transition: transform 0.15s, margin-right 0.15s;
-  cursor: pointer;
-}
-
-/* Slight lift on hover so the card is readable */
-.handRowFaceUp > *:hover {
-  transform: translateY(-12px);
-  margin-right: clamp(-26px, -3.5vw, -16px);
-  z-index: 10;
-}
-
-/* Undo negative margin on last card */
-.handRowFaceUp > *:last-child {
-  margin-right: 0;
-}
-
-/* Opponent face-down fan — top player */
+/* ── Top player face-down fan ── */
 .handRowFaceDown {
   display: flex;
   flex-direction: row;
   gap: 0;
 }
 
-.handRowFaceDown > * { 
-  margin-right: clamp(-48px, -5.5vh, 16px); 
-}
+.handRowFaceDown > *            { margin-right: -28px; }
 .handRowFaceDown > *:last-child { margin-right: 0; }
 
-/* ── Side hand (left / right players) — vertical strip ── */
-.sideHand {
-  display: flex;
-  /* Rotate the horizontal strip to be vertical beside the avatar */
-  transform: rotate(90deg);
-  transform-origin: center center;
-  /* Let it overflow visually without affecting layout */
-  flex-shrink: 0;
-}
-
-/* ── Side hand rotation ─────────────────────────────────────────────────────
-   Opponent card (midpoint): ~78px wide × 112px tall.
-   13 cards at -58px overlap = 13*78 - 12*58 = 1014 - 696 = 318px fan width.
-   After 90° rotation: layout width = 112px, layout height = 318px.
-────────────────────────────────────────────────────────────────────────────── */
+/* ── Side hand (left/right) ── */
+/* Mobile: opponent card 54×76px, 13 cards at -40px overlap
+   fan width = 13*54 - 12*40 = 702 - 480 = 222px, height = 76px
+   After 90° rotation: layout width = 76px, height = 222px */
 .sideHandOuter {
-  width:  112px;
-  height: 318px;
+  width: 54px;
+  height: 158px;
   position: relative;
   flex-shrink: 0;
   overflow: visible;
@@ -180,11 +126,78 @@
   transform-origin: center center;
 }
 
-.left .sideHandInner > *,
-.right .sideHandInner > *{ 
-  margin-right: clamp(-48px, -5.5vw, 16px); 
-}
+.sideHandInner > *            { margin-right: -28px; }
 .sideHandInner > *:last-child { margin-right: 0; }
 
 .rotateLeft  { transform: translate(-50%, -50%) rotate(-90deg); }
 .rotateRight { transform: translate(-50%, -50%) rotate(90deg); }
+
+/* ── 640px ── */
+/* opponent card 72×102px, 13 cards at -54px overlap
+   fan = 13*72 - 12*54 = 936 - 648 = 288px, height = 102px
+   rotated: width=102px, height=288px */
+@media (min-width: 640px) {
+  .avatarWrap { width: 36px; height: 36px; }
+  .initials   { font-size: 12px; }
+  .cardCount  { font-size: 11px; }
+
+  .sideHandOuter             { width: 65px; height: 190px; }
+  .sideHandInner > *         { margin-right: -34px; }
+  .handRowFaceDown > *       { margin-right: -34px; }
+}
+
+/* ── 1280px ── */
+/* opponent card 82×116px, 13 cards at -62px overlap
+   fan = 13*82 - 12*62 = 1066 - 744 = 322px, height = 116px
+   rotated: width=116px, height=322px */
+@media (min-width: 1280px) {
+  .avatarWrap { width: 40px; height: 40px; }
+  .initials   { font-size: 13px; }
+  .cardCount  { font-size: 12px; }
+
+  .sideHandOuter             { width: 74px; height: 220px; }
+  .sideHandInner > *         { margin-right: -38px; }
+  .handRowFaceDown > *       { margin-right: -38px; }
+}
+
+/* ── 1600px ── */
+/* opponent card 92×130px, 13 cards at -70px overlap
+   fan = 13*92 - 12*70 = 1196 - 840 = 356px, height = 130px
+   rotated: width=130px, height=356px */
+@media (min-width: 1600px) {
+  .avatarWrap { width: 44px; height: 44px; }
+  .initials   { font-size: 14px; }
+  .cardCount  { font-size: 13px; }
+
+  .sideHandOuter             { width: 82px; height: 250px; }
+  .sideHandInner > *         { margin-right: -42px; }
+  .handRowFaceDown > *       { margin-right: -42px; }
+}
+
+/* ── 1920px ── */
+/* opponent card 100×142px, 13 cards at -76px overlap
+   fan = 13*100 - 12*76 = 1300 - 912 = 388px, height = 142px
+   rotated: width=142px, height=388px */
+@media (min-width: 1920px) {
+  .avatarWrap { width: 48px; height: 48px; }
+  .initials   { font-size: 15px; }
+  .cardCount  { font-size: 14px; }
+
+  .sideHandOuter             { width: 91px; height: 280px; }
+  .sideHandInner > *         { margin-right: -46px; }
+  .handRowFaceDown > *       { margin-right: -46px; }
+}
+
+/* ── 2560px ── */
+/* opponent card 124×176px, 13 cards at -94px overlap
+   fan = 13*124 - 12*94 = 1612 - 1128 = 484px, height = 176px
+   rotated: width=176px, height=484px */
+@media (min-width: 2560px) {
+  .avatarWrap { width: 56px; height: 56px; }
+  .initials   { font-size: 18px; }
+  .cardCount  { font-size: 16px; }
+
+  .sideHandOuter             { width: 111px; height: 342px; }
+  .sideHandInner > *         { margin-right: -56px; }
+  .handRowFaceDown > *       { margin-right: -56px; }
+}

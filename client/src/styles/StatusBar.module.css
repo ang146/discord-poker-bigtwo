@@ -3,42 +3,33 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 14px;
+  padding: 6px 10px;
   background: rgba(10, 14, 10, 0.8);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  gap: 8px;
   flex-shrink: 0;
   backdrop-filter: blur(6px);
 }
 
-.left, .right {
+.left,
+.right {
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-width: 100px;
+  gap: 6px;
+  min-width: 80px;
 }
 
-.right { justify-content: flex-end; }
-
-.centre {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+.right   { justify-content: flex-end; }
+.centre  { display: flex; align-items: center; gap: 6px; }
 
 .dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-.dotOnline {
-  background: #4ade80;
-  box-shadow: 0 0 6px #4ade80;
-  animation: pulse 2.5s ease-in-out infinite;
-}
-
+.dotOnline  { background: #4ade80; box-shadow: 0 0 6px #4ade80; animation: pulse 2.5s ease-in-out infinite; }
 .dotOffline { background: #f87171; }
 
 @keyframes pulse {
@@ -48,48 +39,47 @@
 
 .label {
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: 11px;
-  color: rgba(255,255,255,0.4);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
   letter-spacing: 0.05em;
 }
 
 .roomLabel {
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.28);
+  color: rgba(255, 255, 255, 0.28);
 }
 
 .roomId {
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: 11px;
+  font-size: 10px;
   color: #d4af6e;
-  background: rgba(212,175,110,0.08);
-  padding: 2px 7px;
+  background: rgba(212, 175, 110, 0.08);
+  padding: 2px 6px;
   border-radius: 4px;
-  border: 1px solid rgba(212,175,110,0.18);
+  border: 1px solid rgba(212, 175, 110, 0.18);
 }
 
 .seats {
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: 12px;
-  color: rgba(255,255,255,0.45);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
 }
 
 .slash {
-  color: rgba(255,255,255,0.2);
+  color: rgba(255, 255, 255, 0.2);
   margin: 0 1px;
 }
 
-/* Settings button */
 .settingsBtn {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.05);
-  color: rgba(255,255,255,0.45);
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -100,27 +90,74 @@
 }
 
 .settingsBtn:hover {
-  background: rgba(255,255,255,0.1);
-  color: rgba(255,255,255,0.8);
-  border-color: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
-.settingsBtn:active {
-  transform: scale(0.94);
-}
+.settingsBtn:active { transform: scale(0.94); }
 
 .errorBanner {
   position: absolute;
-  bottom: -32px;
+  bottom: -28px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(239,68,68,0.15);
-  border: 1px solid rgba(239,68,68,0.35);
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
   color: #fca5a5;
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: 11px;
-  padding: 4px 14px;
+  font-size: 10px;
+  padding: 3px 12px;
   border-radius: 6px;
   white-space: nowrap;
   z-index: 10;
+}
+
+/* ── 640px ── */
+@media (min-width: 640px) {
+  .bar         { padding: 8px 14px; gap: 12px; }
+  .dot         { width: 7px; height: 7px; }
+  .label       { font-size: 11px; }
+  .roomLabel   { font-size: 10px; }
+  .roomId      { font-size: 11px; }
+  .settingsBtn { width: 30px; height: 30px; border-radius: 8px; }
+  .errorBanner { bottom: -32px; font-size: 11px; }
+}
+
+/* ── 1280px ── */
+@media (min-width: 1280px) {
+  .bar         { padding: 9px 16px; }
+  .label       { font-size: 12px; }
+  .roomId      { font-size: 12px; }
+  .seats       { font-size: 13px; }
+  .settingsBtn { width: 32px; height: 32px; }
+}
+
+/* ── 1600px ── */
+@media (min-width: 1600px) {
+  .bar         { padding: 10px 18px; }
+  .label       { font-size: 13px; }
+  .roomId      { font-size: 13px; }
+  .seats       { font-size: 14px; }
+}
+
+/* ── 1920px ── */
+@media (min-width: 1920px) {
+  .bar         { padding: 11px 20px; }
+  .label       { font-size: 14px; }
+  .roomId      { font-size: 14px; }
+  .seats       { font-size: 15px; }
+  .settingsBtn { width: 36px; height: 36px; }
+}
+
+/* ── 2560px ── */
+@media (min-width: 2560px) {
+  .bar         { padding: 14px 26px; }
+  .dot         { width: 9px; height: 9px; }
+  .label       { font-size: 17px; }
+  .roomLabel   { font-size: 13px; }
+  .roomId      { font-size: 17px; }
+  .seats       { font-size: 18px; }
+  .settingsBtn { width: 44px; height: 44px; border-radius: 10px; }
+  .errorBanner { font-size: 14px; }
 }

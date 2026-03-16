@@ -10,43 +10,42 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding: 14px 16px 20px;
-  gap: 14px;
+  padding: 10px 12px 16px;
+  gap: 10px;
   overflow: hidden;
 }
 
-/* ── Top-left block: host badge + spectators stacked ── */
 .topRow {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
 .spectatorsWrap {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .specLabel {
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: 9px;
+  font-size: 8px;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.25);
+  color: rgba(255, 255, 255, 0.25);
   white-space: nowrap;
 }
 
 .specRow {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: nowrap;
 }
 
-/* ── Game header ── */
+/* ── Header ── */
 .header {
   text-align: center;
   flex-shrink: 0;
@@ -54,92 +53,90 @@
 
 .gameLabel {
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.28);
-  margin: 0 0 4px;
+  color: rgba(255, 255, 255, 0.28);
+  margin: 0 0 3px;
 }
 
 .gameTitle {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(26px, 6vw, 36px);
+  font-size: 26px;
   font-weight: 700;
   font-style: italic;
-  margin: 0 0 5px;
+  margin: 0 0 4px;
   background: linear-gradient(135deg, #f5e6c8 10%, #d4af6e 55%, #a07840 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 2px 10px rgba(212,175,110,0.2));
+  filter: drop-shadow(0 2px 10px rgba(212, 175, 110, 0.2));
   line-height: 1.1;
 }
 
 .botLevelLabel {
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: 11px;
+  font-size: 10px;
   color: rgba(212, 175, 110, 0.55);
   letter-spacing: 0.1em;
-  margin: 0 0 4px;
+  margin: 0 0 3px;
 }
 
 .statusLine {
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: 11px;
-  color: rgba(255,255,255,0.32);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.32);
   letter-spacing: 0.08em;
   margin: 0;
 }
 
-/* ── Players section ── */
+/* ── Players ── */
 .playersSection {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex: 1;
   justify-content: center;
 }
 
 .sectionLabel {
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: 9px;
+  font-size: 8px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.22);
+  color: rgba(255, 255, 255, 0.22);
   align-self: center;
 }
 
-/* Horizontal player row — centred, wraps if needed */
 .playersRow {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
-/* ── Action buttons — vertical stack, all same width ── */
+/* ── Actions ── */
 .actions {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
-  width: 220px;
+  width: 200px;
   margin: 0 auto;
 }
 
-/* Shared button base — ALL action buttons same dimensions */
 .readyBtn,
 .standBtn,
 .startBtn {
   width: 100%;
-  height: 46px;
-  padding: 0 20px;
+  height: 42px;
+  padding: 0 16px;
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
@@ -151,76 +148,145 @@
   box-sizing: border-box;
 }
 
-/* Fixed-width ready button — icon or text both centred in same box */
 .readyBtn {
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.06);
-  color: rgba(255,255,255,0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.6);
   font-family: 'Playfair Display', Georgia, serif;
 }
 
 .readyBtn:hover:not(:disabled) {
-  background: rgba(255,255,255,0.1);
-  border-color: rgba(255,255,255,0.22);
-  color: rgba(255,255,255,0.88);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.88);
 }
+
 .readyBtn:active:not(:disabled) { transform: scale(0.97); }
 .readyBtn:disabled { opacity: 0.3; cursor: not-allowed; }
 
 .readyBtnActive {
-  border-color: rgba(74,222,128,0.5) !important;
-  background: rgba(74,222,128,0.1) !important;
+  border-color: rgba(74, 222, 128, 0.5) !important;
+  background: rgba(74, 222, 128, 0.1) !important;
   color: #4ade80 !important;
-  box-shadow: 0 0 18px rgba(74,222,128,0.12);
-}
-.readyBtnActive:hover:not(:disabled) {
-  background: rgba(74,222,128,0.16) !important;
+  box-shadow: 0 0 18px rgba(74, 222, 128, 0.12);
 }
 
-/* Inner span — ensures icon+text and plain-text occupy the same fixed space */
+.readyBtnActive:hover:not(:disabled) { background: rgba(74, 222, 128, 0.16) !important; }
+
 .readyBtnInner {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 7px;
-  /* Explicit min-width prevents the button from resizing between states */
-  min-width: 120px;
+  min-width: 110px;
 }
 
-/* Stand up */
 .standBtn {
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.04);
-  color: rgba(255,255,255,0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.4);
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+
 .standBtn:hover {
-  background: rgba(255,255,255,0.07);
-  border-color: rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.65);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.65);
 }
 
-/* Start game — host only */
 .startBtn {
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.05);
-  color: rgba(255,255,255,0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.25);
   font-family: 'Playfair Display', Georgia, serif;
   cursor: not-allowed;
 }
 
 .startBtnEnabled {
   cursor: pointer;
-  border-color: rgba(212,175,110,0.5);
-  background: rgba(212,175,110,0.1);
+  border-color: rgba(212, 175, 110, 0.5);
+  background: rgba(212, 175, 110, 0.1);
   color: #d4af6e;
-  box-shadow: 0 0 20px rgba(212,175,110,0.15);
+  box-shadow: 0 0 20px rgba(212, 175, 110, 0.15);
 }
+
 .startBtnEnabled:hover {
-  background: rgba(212,175,110,0.18);
-  box-shadow: 0 0 28px rgba(212,175,110,0.22);
+  background: rgba(212, 175, 110, 0.18);
+  box-shadow: 0 0 28px rgba(212, 175, 110, 0.22);
 }
+
 .startBtnEnabled:active { transform: scale(0.97); }
+
+/* ── 640px ── */
+@media (min-width: 640px) {
+  .main         { padding: 14px 16px 20px; gap: 14px; }
+  .specLabel    { font-size: 9px; }
+  .gameLabel    { font-size: 10px; }
+  .gameTitle    { font-size: 32px; }
+  .botLevelLabel { font-size: 11px; }
+  .statusLine   { font-size: 11px; }
+  .sectionLabel { font-size: 9px; }
+  .playersRow   { gap: 10px; }
+  .actions      { width: 220px; gap: 8px; }
+
+  .readyBtn,
+  .standBtn,
+  .startBtn     { height: 46px; font-size: 14px; }
+
+  .standBtn     { font-size: 11px; }
+  .readyBtnInner { min-width: 120px; }
+}
+
+/* ── 1280px ── */
+@media (min-width: 1280px) {
+  .gameTitle    { font-size: 36px; }
+  .botLevelLabel { font-size: 12px; }
+  .statusLine   { font-size: 12px; }
+  .actions      { width: 240px; }
+
+  .readyBtn,
+  .standBtn,
+  .startBtn     { height: 50px; font-size: 15px; }
+}
+
+/* ── 1600px ── */
+@media (min-width: 1600px) {
+  .main         { padding: 18px 20px 24px; gap: 18px; }
+  .gameTitle    { font-size: 40px; }
+  .botLevelLabel { font-size: 13px; }
+  .statusLine   { font-size: 13px; }
+  .actions      { width: 260px; }
+
+  .readyBtn,
+  .standBtn,
+  .startBtn     { height: 54px; font-size: 16px; }
+}
+
+/* ── 1920px ── */
+@media (min-width: 1920px) {
+  .main         { padding: 22px 24px 28px; gap: 22px; }
+  .gameTitle    { font-size: 46px; }
+  .botLevelLabel { font-size: 14px; }
+  .statusLine   { font-size: 14px; }
+  .actions      { width: 290px; }
+
+  .readyBtn,
+  .standBtn,
+  .startBtn     { height: 58px; font-size: 17px; }
+}
+
+/* ── 2560px ── */
+@media (min-width: 2560px) {
+  .main         { padding: 28px 32px 36px; gap: 28px; }
+  .gameTitle    { font-size: 58px; }
+  .botLevelLabel { font-size: 17px; }
+  .statusLine   { font-size: 17px; }
+  .actions      { width: 360px; }
+
+  .readyBtn,
+  .standBtn,
+  .startBtn     { height: 70px; font-size: 21px; }
+}

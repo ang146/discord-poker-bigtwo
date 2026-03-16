@@ -8,7 +8,7 @@
   position: relative;
 }
 
-/* ── Game area — column: top | middle | bottom ── */
+/* ── Game area ── */
 .gameArea {
   flex: 1;
   display: flex;
@@ -23,12 +23,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 6px 0 0;
+  padding: 4px 0 0;
   position: relative;
   z-index: 2;
 }
 
-/* ── Middle row: left | table | right ── */
+/* ── Middle row ── */
 .middleRow {
   flex: 1;
   display: flex;
@@ -46,10 +46,10 @@
   justify-content: center;
   position: relative;
   z-index: 2;
-  padding: 0 4px;
+  padding: 0 2px;
 }
 
-/* ── Table — invisible, just the grid ── */
+/* ── Table ── */
 .tableWrap {
   flex: 1;
   min-width: 0;
@@ -58,37 +58,21 @@
 
 .tableGrid {
   position: absolute;
-  inset: 8px;
+  inset: 4px;
   display: grid;
-  grid-template-rows: 1 3fr;
-  gap: 3px;
+  grid-template-rows: 1fr 3fr;
+  gap: 2px;
 }
 
-.corner {}
-
-/* Hand zones — subtle dashed guides, no background */
 .handZone {
   border: 1px dashed rgba(255, 255, 255, 0.07);
-  border-radius: 5px;
+  border-radius: 4px;
   overflow: hidden;
 }
 
-.handTop,
-.handBottom {
+.handTop {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
-  width: 100%;
-  height: 100%;
-  gap: 2px;
-  padding: 2px;
-  align-content: flex-start;
-}
-
-.handLeft,
-.handRight {
-  display: flex;
-  flex-direction: column;
   flex-wrap: wrap;
   width: 100%;
   height: 100%;
@@ -106,50 +90,34 @@
   gap: 4px;
 }
 
-.selfHandWrap,
 .centerGrid {
   display: grid;
   grid-template-columns: 1fr max-content 1fr;
   align-items: center;
   width: 100%;
-  height: 100%;
-  gap: 10px;
+  gap: 6px;
 }
 
-.selfHandWrap {
-  padding-top: 20px;
-}
-
-.selfHandLeft,
 .centerLeft {
   display: flex;
   justify-content: flex-end;
   align-items: center;
 }
 
-.selfHandCenter,
 .centerCol {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 4px;
 }
 
-.centerCol {
-  flex-direction: column;
-}
-
-.selfHandCenter {
-  flex-direction: row;
-}
-
-.selfHandRight,
 .centerRight {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .centerCards {
@@ -158,20 +126,20 @@
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 4px;
-  padding: 4px;
+  gap: 3px;
+  padding: 3px;
 }
 
 .centerSuits {
-  font-size: clamp(10px, 1.6vw, 18px);
-  letter-spacing: 0.35em;
+  font-size: 10px;
+  letter-spacing: 0.3em;
   color: rgba(255, 255, 255, 0.08);
   user-select: none;
 }
 
 .centerLabel {
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: clamp(6px, 0.9vw, 10px);
+  font-size: 7px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.1);
@@ -183,15 +151,13 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 3px;
+  padding: 2px;
 }
-.historyFan > *           { margin-right: -8px; }
+
+.historyFan > *            { margin-right: -6px; }
 .historyFan > *:last-child { margin-right: 0; }
 
-.historyFanLeft  { transform: rotate(90deg);  margin-top: -8px; margin-bottom: -8px; }
-.historyFanRight { transform: rotate(-90deg); margin-top: -8px; margin-bottom: -8px; }
-
-/* ── Bottom zone — full width ── */
+/* ── Bottom zone ── */
 .bottomZone {
   flex-shrink: 0;
   display: flex;
@@ -199,49 +165,64 @@
   align-items: stretch;
   position: relative;
   z-index: 2;
-  padding: 2px 8px 6px;
+  padding: 2px 6px 4px;
   gap: 2px;
 }
 
-/* Error / tip row — above the hand, below buttons */
 .msgRow {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  padding-top: 34px; /* clear the absolute button bar height */
 }
 
+/* ── Self hand ── */
 .selfHandWrap {
-  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr max-content 1fr;
+  align-items: center;
+  width: 100%;
   overflow-x: auto;
   overflow-y: visible;
   scrollbar-width: none;
+  padding-top: 16px;
+  padding-bottom: 14px;
 }
+
 .selfHandWrap::-webkit-scrollbar { display: none; }
 
-.sortBtn {
-  flex-shrink: 0;
-  margin-left: 8px;
-  font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: clamp(10px, 1.1vw, 12px);
-  padding: 5px 12px;
-  border-color: rgba(255, 255, 255, 0.2);
-  z-index: 2;
+.selfHandLeft {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.selfHandCenter {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.selfHandRight {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .selfCardWrap {
   position: relative;
-  margin-right: clamp(-48px, -4vw, -12px);
+  margin-right: -28px;
   cursor: pointer;
   transition: margin-right 0.12s ease, transform 0.12s ease;
   z-index: 1;
 }
 
 .selfCardWrap:hover {
-  transform: translateY(-16px);
+  transform: translateY(-14px);
   margin-right: 0px;
-  z-index: 5;
+  z-index: 10;
 }
 
 .selfCardWrap:last-child { margin-right: 0; }
@@ -249,13 +230,13 @@
 /* ── Action buttons ── */
 .actionBtn {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(11px, 1.3vw, 14px);
+  font-size: 11px;
   font-weight: 600;
   color: #e8dcc8;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 8px;
-  padding: 7px 16px;
+  border-radius: 7px;
+  padding: 5px 12px;
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
@@ -276,6 +257,7 @@
   border-color: rgba(255, 120, 80, 0.5);
   color: #ffb4a0;
 }
+
 .passBtn:not(:disabled):hover {
   background: rgba(255, 100, 60, 0.15);
   border-color: rgba(255, 120, 80, 0.8);
@@ -285,16 +267,24 @@
   background: rgba(212, 175, 110, 0.15);
   border-color: rgba(212, 175, 110, 0.55);
   color: #f5e6c8;
-  font-size: clamp(12px, 1.5vw, 16px);
-}
-.playBtn:not(:disabled):hover {
-  background: rgba(212, 175, 110, 0.28);
+  font-size: 12px;
 }
 
-/* ── Error / tip messages ── */
+.playBtn:not(:disabled):hover { background: rgba(212, 175, 110, 0.28); }
+
+.sortBtn {
+  flex-shrink: 0;
+  align-self: flex-end;
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 10px;
+  padding: 4px 10px;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ── Error / tip ── */
 .playError {
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: clamp(10px, 1.2vw, 13px);
+  font-size: 10px;
   color: #e57373;
   text-align: center;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
@@ -302,17 +292,17 @@
 
 .lastCardTip {
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: clamp(9px, 1.1vw, 12px);
+  font-size: 9px;
   color: #4ade80;
   text-align: center;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
 
-/* ── Turn label (absolute, per-zone) ── */
+/* ── Turn label ── */
 .turnLabel {
   position: absolute;
   font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: clamp(9px, 1.1vw, 11px);
+  font-size: 8px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -320,43 +310,35 @@
   background: rgba(10, 14, 8, 0.88);
   border: 1px solid rgba(212, 175, 110, 0.6);
   border-radius: 4px;
-  padding: 3px 9px;
+  padding: 2px 6px;
   pointer-events: none;
   white-space: nowrap;
   z-index: 10;
   animation: turnPulse 1.4s ease-in-out infinite alternate;
 }
 
-.topZone .turnLabel {
-  bottom: -26px; top: auto; left: 50%; transform: translateX(-50%);
-}
-.leftZone .turnLabel {
-  top: 50%; left: auto; right: -44px; transform: translateY(-50%) rotate(-90deg);
-}
-.rightZone .turnLabel {
-  top: 50%; right: auto; left: -44px; transform: translateY(-50%) rotate(90deg);
-}
-.bottomZone .turnLabel {
-  top: -26px; bottom: auto; left: 50%; transform: translateX(-50%);
-}
+.topZone    .turnLabel { bottom: -20px; top: auto;  left: 50%; transform: translateX(-50%); }
+.leftZone   .turnLabel { top: 50%; left: auto;  right: -36px; transform: translateY(-50%) rotate(-90deg); }
+.rightZone  .turnLabel { top: 50%; right: auto; left: -36px;  transform: translateY(-50%) rotate(90deg); }
+.bottomZone .turnLabel { top: -20px; bottom: auto; left: 50%; transform: translateX(-50%); }
 
 @keyframes turnPulse {
-  from { opacity: 0.6; box-shadow: 0 0 4px rgba(212,175,110,0.15); }
-  to   { opacity: 1;   box-shadow: 0 0 12px rgba(212,175,110,0.45); }
+  from { opacity: 0.6; box-shadow: 0 0 4px rgba(212, 175, 110, 0.15); }
+  to   { opacity: 1;   box-shadow: 0 0 12px rgba(212, 175, 110, 0.45); }
 }
 
-/* ── Pass bubble (absolute, per-zone) ── */
+/* ── Pass bubble ── */
 .passBubble {
   position: absolute;
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(11px, 1.3vw, 14px);
+  font-size: 11px;
   font-weight: 700;
   font-style: italic;
   color: #e8dcc8;
   background: rgba(20, 20, 20, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 12px;
-  padding: 4px 12px;
+  border-radius: 10px;
+  padding: 3px 10px;
   pointer-events: none;
   white-space: nowrap;
   z-index: 10;
@@ -371,55 +353,40 @@
   border-right: 5px solid transparent;
 }
 
-.topZone .passBubble {
-  bottom: -44px; top: auto; left: 50%;
-  animation: bubbleFadeTop 2.5s ease forwards;
-}
-.topZone .passBubble::before {
-  top: -6px; border-bottom: 6px solid rgba(255,255,255,0.18);
-}
+.topZone    .passBubble { bottom: -36px; top: auto;  left: 50%; animation: bubbleFadeTop  2.5s ease forwards; }
+.leftZone   .passBubble { top: 50%; left: auto;  right: -64px; transform: translateY(-50%); animation: bubbleFadeSide 2.5s ease forwards; }
+.rightZone  .passBubble { top: 50%; right: auto; left: -64px;  transform: translateY(-50%); animation: bubbleFadeSide 2.5s ease forwards; }
+.bottomZone .passBubble { top: -36px; bottom: auto; left: 50%; animation: bubbleFadeTop  2.5s ease forwards; }
 
-.leftZone .passBubble {
-  top: 50%; left: auto; right: -76px; transform: translateY(-50%);
-  animation: bubbleFadeSide 2.5s ease forwards;
-}
-.leftZone .passBubble::before  { display: none; }
-
-.rightZone .passBubble {
-  top: 50%; right: auto; left: -76px; transform: translateY(-50%);
-  animation: bubbleFadeSide 2.5s ease forwards;
-}
-.rightZone .passBubble::before { display: none; }
-
-.bottomZone .passBubble {
-  top: -44px; bottom: auto; left: 50%;
-  animation: bubbleFadeTop 2.5s ease forwards;
-}
-.bottomZone .passBubble::before {
-  bottom: -6px; top: auto;
-  border-top: 6px solid rgba(255,255,255,0.18); border-bottom: none;
-}
+.topZone    .passBubble::before { top: -5px;    border-bottom: 5px solid rgba(255, 255, 255, 0.18); }
+.leftZone   .passBubble::before { display: none; }
+.rightZone  .passBubble::before { display: none; }
+.bottomZone .passBubble::before { bottom: -5px; top: auto; border-top: 5px solid rgba(255, 255, 255, 0.18); border-bottom: none; }
 
 @keyframes bubbleFadeTop {
-  0%   { opacity: 0; transform: translateX(-50%) translateY(4px);  }
-  12%  { opacity: 1; transform: translateX(-50%) translateY(0);     }
+  0%   { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  12%  { opacity: 1; transform: translateX(-50%) translateY(0); }
   70%  { opacity: 1; }
-  100% { opacity: 0; transform: translateX(-50%) translateY(-3px);  }
-}
-@keyframes bubbleFadeSide {
-  0% { opacity: 0; } 12% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-3px); }
 }
 
-/* ── "Your Turn" banner ── */
+@keyframes bubbleFadeSide {
+  0%   { opacity: 0; }
+  12%  { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ── Your Turn banner ── */
 .yourTurnBanner {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(13px, 1.8vw, 20px);
+  font-size: 14px;
   font-weight: 700;
   font-style: italic;
   color: #d4af6e;
   letter-spacing: 0.06em;
   text-align: center;
-  text-shadow: 0 0 18px rgba(212,175,110,0.7), 0 2px 6px rgba(0,0,0,0.9);
+  text-shadow: 0 0 18px rgba(212, 175, 110, 0.7), 0 2px 6px rgba(0, 0, 0, 0.9);
   pointer-events: none;
   width: 100%;
   padding-bottom: 4px;
@@ -429,4 +396,156 @@
 @keyframes yourTurnPulse {
   from { opacity: 0.75; transform: scale(0.98); }
   to   { opacity: 1;    transform: scale(1.02); }
+}
+
+/* ── 640px ── */
+@media (min-width: 640px) {
+  .topZone    { padding: 6px 0 0; }
+  .tableGrid  { inset: 6px; gap: 3px; }
+
+  .historyFan > * { margin-right: -7px; }
+
+  .selfHandWrap   { padding-top: 20px; padding-bottom: 16px; }
+  .selfCardWrap   { margin-right: -38px; }
+  .selfCardWrap:hover { margin-right: -0px; }
+
+  .actionBtn      { font-size: 12px; padding: 6px 14px; border-radius: 8px; }
+  .playBtn        { font-size: 13px; }
+  .sortBtn        { font-size: 11px; padding: 5px 12px; }
+
+  .turnLabel      { font-size: 9px; padding: 3px 8px; }
+  .topZone    .turnLabel { bottom: -22px; }
+  .leftZone   .turnLabel { right: -40px; }
+  .rightZone  .turnLabel { left: -40px; }
+  .bottomZone .turnLabel { top: -22px; }
+
+  .passBubble     { font-size: 12px; padding: 4px 12px; }
+  .topZone    .passBubble { bottom: -40px; }
+  .leftZone   .passBubble { right: -70px; }
+  .rightZone  .passBubble { left: -70px; }
+  .bottomZone .passBubble { top: -40px; }
+
+  .yourTurnBanner { font-size: 16px; }
+  .centerSuits    { font-size: 13px; }
+  .centerLabel    { font-size: 8px; }
+  .playError      { font-size: 11px; }
+  .lastCardTip    { font-size: 10px; }
+}
+
+/* ── 1280px ── */
+@media (min-width: 1280px) {
+  .tableGrid  { inset: 8px; gap: 4px; }
+
+  .selfHandWrap   { padding-top: 22px; padding-bottom: 18px; }
+  .selfCardWrap   { margin-right: -44px; }
+  .selfCardWrap:hover { margin-right: -0px; }
+
+  .actionBtn      { font-size: 13px; padding: 7px 16px; }
+  .playBtn        { font-size: 14px; }
+  .sortBtn        { font-size: 12px; padding: 6px 13px; }
+
+  .turnLabel      { font-size: 10px; padding: 3px 9px; }
+  .topZone    .turnLabel { bottom: -24px; }
+  .leftZone   .turnLabel { right: -44px; }
+  .rightZone  .turnLabel { left: -44px; }
+  .bottomZone .turnLabel { top: -24px; }
+
+  .passBubble     { font-size: 13px; padding: 4px 13px; }
+  .topZone    .passBubble { bottom: -44px; }
+  .leftZone   .passBubble { right: -76px; }
+  .rightZone  .passBubble { left: -76px; }
+  .bottomZone .passBubble { top: -44px; }
+
+  .yourTurnBanner { font-size: 18px; }
+  .centerSuits    { font-size: 15px; }
+  .centerLabel    { font-size: 9px; }
+  .playError      { font-size: 12px; }
+  .lastCardTip    { font-size: 11px; }
+}
+
+/* ── 1600px ── */
+@media (min-width: 1600px) {
+  .selfHandWrap   { padding-top: 24px; padding-bottom: 20px; }
+  .selfCardWrap   { margin-right: -50px; }
+  .selfCardWrap:hover { margin-right: -0px; }
+
+  .actionBtn      { font-size: 14px; padding: 8px 18px; }
+  .playBtn        { font-size: 15px; }
+  .sortBtn        { font-size: 13px; }
+
+  .turnLabel      { font-size: 11px; padding: 4px 10px; }
+  .topZone    .turnLabel { bottom: -26px; }
+  .leftZone   .turnLabel { right: -48px; }
+  .rightZone  .turnLabel { left: -48px; }
+  .bottomZone .turnLabel { top: -26px; }
+
+  .passBubble     { font-size: 14px; padding: 5px 14px; }
+  .topZone    .passBubble { bottom: -48px; }
+  .leftZone   .passBubble { right: -84px; }
+  .rightZone  .passBubble { left: -84px; }
+  .bottomZone .passBubble { top: -48px; }
+
+  .yourTurnBanner { font-size: 20px; }
+  .centerSuits    { font-size: 17px; }
+  .centerLabel    { font-size: 10px; }
+  .playError      { font-size: 13px; }
+  .lastCardTip    { font-size: 12px; }
+}
+
+/* ── 1920px ── */
+@media (min-width: 1920px) {
+  .selfHandWrap   { padding-top: 28px; padding-bottom: 22px; }
+  .selfCardWrap   { margin-right: -56px; }
+  .selfCardWrap:hover { margin-right: -0px; }
+
+  .actionBtn      { font-size: 15px; padding: 9px 20px; }
+  .playBtn        { font-size: 16px; }
+  .sortBtn        { font-size: 14px; }
+
+  .turnLabel      { font-size: 12px; padding: 4px 11px; }
+  .topZone    .turnLabel { bottom: -28px; }
+  .leftZone   .turnLabel { right: -52px; }
+  .rightZone  .turnLabel { left: -52px; }
+  .bottomZone .turnLabel { top: -28px; }
+
+  .passBubble     { font-size: 15px; padding: 5px 16px; }
+  .topZone    .passBubble { bottom: -52px; }
+  .leftZone   .passBubble { right: -92px; }
+  .rightZone  .passBubble { left: -92px; }
+  .bottomZone .passBubble { top: -52px; }
+
+  .yourTurnBanner { font-size: 22px; }
+  .centerSuits    { font-size: 20px; }
+  .centerLabel    { font-size: 11px; }
+  .playError      { font-size: 14px; }
+  .lastCardTip    { font-size: 13px; }
+}
+
+/* ── 2560px ── */
+@media (min-width: 2560px) {
+  .selfHandWrap   { padding-top: 34px; padding-bottom: 26px; }
+  .selfCardWrap   { margin-right: -70px; }
+  .selfCardWrap:hover { margin-right: -0px; }
+
+  .actionBtn      { font-size: 18px; padding: 11px 26px; border-radius: 10px; }
+  .playBtn        { font-size: 20px; }
+  .sortBtn        { font-size: 16px; }
+
+  .turnLabel      { font-size: 14px; padding: 5px 14px; }
+  .topZone    .turnLabel { bottom: -34px; }
+  .leftZone   .turnLabel { right: -62px; }
+  .rightZone  .turnLabel { left: -62px; }
+  .bottomZone .turnLabel { top: -34px; }
+
+  .passBubble     { font-size: 18px; padding: 6px 20px; }
+  .topZone    .passBubble { bottom: -62px; }
+  .leftZone   .passBubble { right: -112px; }
+  .rightZone  .passBubble { left: -112px; }
+  .bottomZone .passBubble { top: -62px; }
+
+  .yourTurnBanner { font-size: 28px; }
+  .centerSuits    { font-size: 24px; }
+  .centerLabel    { font-size: 13px; }
+  .playError      { font-size: 17px; }
+  .lastCardTip    { font-size: 16px; }
 }

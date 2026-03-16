@@ -1,29 +1,28 @@
-/* ── Shared shell ── */
+/* ── Shared shell — Mobile base ── */
 .card {
   position: relative;
   border-radius: 8px;
   flex-shrink: 0;
   user-select: none;
-  /* Default (centre pile / history) */
-  --width-calc: clamp(38px, 5vw, 58px);
-  width: var(--width-calc);
-  height: clamp(54px, 7.2vw, 82px);
-  --margin-calc: calc(var(--width-calc) / 3 * -1);
+  width: 38px;
+  height: 54px;
 }
 
 /* ── Face-up ── */
 .face {
   background: #ffffff;
-  border: 1px solid rgba(0,0,0,0.18);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.9);
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .face.selected {
   transform: translateY(-16px);
   box-shadow:
-    0 10px 24px rgba(74,222,128,0.5),
+    0 10px 24px rgba(74, 222, 128, 0.5),
     0 0 0 2.5px #4ade80,
-    inset 0 1px 0 rgba(255,255,255,0.9);
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 /* ── Corner pip ── */
@@ -35,20 +34,26 @@
   gap: 0;
   line-height: 1;
 }
-.pipTL { top: 4px; left: 5px; }
-.pipBR { bottom: 4px; right: 5px; transform: rotate(180deg); }
+
+.pipTL { top: 3px; left: 4px; }
+.pipBR { bottom: 3px; right: 4px; transform: rotate(180deg); }
 
 .rank {
   font-family: 'DM Mono', 'Courier New', monospace;
   font-weight: 700;
-  font-size: clamp(9px, 1.2vw, 13px);
+  font-size: 9px;
   line-height: 1;
   display: block;
 }
-.underlined { text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1.5px; }
+
+.underlined {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1.5px;
+}
 
 .pipSuit {
-  font-size: clamp(7px, 0.95vw, 11px);
+  font-size: 7px;
   line-height: 1;
   display: block;
 }
@@ -59,61 +64,152 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: clamp(16px, 2.4vw, 28px);
+  font-size: 16px;
   line-height: 1;
   pointer-events: none;
   display: block;
 }
 
-/* ── Colour — covers rank, pipSuit AND suitCenter ── */
+/* ── Colour ── */
 .red   .rank, .red   .pipSuit, .red   .suitCenter { color: #d62828; }
 .black .rank, .black .pipSuit, .black .suitCenter { color: #111111; }
 
 /* ── Face-down ── */
 .back {
   background: #6e1424;
-  border: 1px solid rgba(255,255,255,0.15);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.45);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .backInner {
   width: calc(100% - 8px);
   height: calc(100% - 8px);
   border-radius: 4px;
-  border: 2px solid rgba(255,255,255,0.75);
+  border: 2px solid rgba(255, 255, 255, 0.75);
 }
 
 /* ── Small — history fans only ── */
 .small {
-  width:  26px;
+  width: 26px;
   height: 37px;
   border-radius: 5px;
 }
+
 .small .backInner  { width: calc(100% - 6px); height: calc(100% - 6px); border-width: 1.5px; }
-.small .rank       { font-size: 9px; }
-.small .pipSuit    { font-size: 8px; }
+.small .rank       { font-size: 7px; }
+.small .pipSuit    { font-size: 6px; }
 .small .pipTL      { top: 2px; left: 3px; }
 .small .pipBR      { bottom: 2px; right: 3px; }
 .small .suitCenter { display: none; }
 
-/* ── Large — self hand (≈1.5× default) ── */
+/* ── Large — self hand ── */
 .large {
-  width:  clamp(60px, 8vw, 96px);
-  height: clamp(86px, 11.5vw, 138px);
-  border-radius: 12px;
+  width: 54px;
+  height: 76px;
+  border-radius: 10px;
 }
-.large .rank       { font-size: clamp(15px, 2vw, 22px); }
-.large .pipSuit    { font-size: clamp(12px, 1.6vw, 18px); }
-.large .pipTL      { top: 7px; left: 8px; gap: 1px; }
-.large .pipBR      { bottom: 7px; right: 8px; gap: 1px; }
-.large .suitCenter { font-size: clamp(26px, 3.6vw, 48px); }
 
-/* ── Opponent — same footprint as large, face-down ── */
-.opponent {
-  width:  clamp(60px, 8vw, 96px);
-  height: clamp(86px, 11.5vw, 138px);
-  border-radius: 12px;
+.large .rank       { font-size: 13px; }
+.large .pipSuit    { font-size: 11px; }
+.large .pipTL      { top: 5px; left: 6px; gap: 1px; }
+.large .pipBR      { bottom: 5px; right: 6px; gap: 1px; }
+.large .suitCenter { font-size: 22px; }
+
+/* ── 640px ── */
+@media (min-width: 640px) {
+  .card { width: 46px; height: 65px; }
+  
+  .rank       { font-size: 11px; }
+  .pipSuit    { font-size: 9px; }
+  .suitCenter { font-size: 20px; }
+
+  .small { width: 30px; height: 43px; }
+  .small .rank    { font-size: 8px; }
+  .small .pipSuit { font-size: 7px; }
+
+  .large { width: 72px; height: 102px; border-radius: 11px; }
+  .large .rank       { font-size: 17px; }
+  .large .pipSuit    { font-size: 14px; }
+  .large .pipTL      { top: 6px; left: 7px; }
+  .large .pipBR      { bottom: 6px; right: 7px; }
+  .large .suitCenter { font-size: 30px; }
 }
-.opponent .backInner { width: calc(100% - 10px); height: calc(100% - 10px); border-width: 2px; }
+
+/* ── 1280px ── */
+@media (min-width: 1280px) {
+  .card { width: 52px; height: 74px; }
+  .rank       { font-size: 12px; }
+  .pipSuit    { font-size: 10px; }
+  .suitCenter { font-size: 22px; }
+
+  .small { width: 34px; height: 48px; }
+  .small .rank    { font-size: 9px; }
+  .small .pipSuit { font-size: 8px; }
+
+  .large { width: 82px; height: 116px; border-radius: 12px; }
+  .large .rank       { font-size: 20px; }
+  .large .pipSuit    { font-size: 16px; }
+  .large .pipTL      { top: 7px; left: 8px; }
+  .large .pipBR      { bottom: 7px; right: 8px; }
+  .large .suitCenter { font-size: 34px; }
+}
+
+/* ── 1600px ── */
+@media (min-width: 1600px) {
+  .card { width: 58px; height: 82px; }
+  .rank       { font-size: 13px; }
+  .pipSuit    { font-size: 11px; }
+  .suitCenter { font-size: 24px; }
+
+  .small { width: 38px; height: 54px; }
+  .small .rank    { font-size: 10px; }
+  .small .pipSuit { font-size: 9px; }
+
+  .large { width: 92px; height: 130px; border-radius: 13px; }
+  .large .rank       { font-size: 22px; }
+  .large .pipSuit    { font-size: 18px; }
+  .large .pipTL      { top: 8px; left: 9px; }
+  .large .pipBR      { bottom: 8px; right: 9px; }
+  .large .suitCenter { font-size: 40px; }
+}
+
+/* ── 1920px ── */
+@media (min-width: 1920px) {
+  .card { width: 64px; height: 91px; }
+  .rank       { font-size: 14px; }
+  .pipSuit    { font-size: 12px; }
+  .suitCenter { font-size: 28px; }
+
+  .small { width: 42px; height: 60px; }
+  .small .rank    { font-size: 11px; }
+  .small .pipSuit { font-size: 9px; }
+
+  .large { width: 100px; height: 142px; border-radius: 14px; }
+  .large .rank       { font-size: 24px; }
+  .large .pipSuit    { font-size: 20px; }
+  .large .pipTL      { top: 9px; left: 10px; }
+  .large .pipBR      { bottom: 9px; right: 10px; }
+  .large .suitCenter { font-size: 44px; }
+}
+
+/* ── 2560px ── */
+@media (min-width: 2560px) {
+  .card { width: 78px; height: 111px; }
+  .rank       { font-size: 17px; }
+  .pipSuit    { font-size: 14px; }
+  .suitCenter { font-size: 34px; }
+
+  .small { width: 52px; height: 74px; }
+  .small .rank    { font-size: 13px; }
+  .small .pipSuit { font-size: 11px; }
+
+  .large { width: 124px; height: 176px; border-radius: 16px; }
+  .large .rank       { font-size: 30px; }
+  .large .pipSuit    { font-size: 24px; }
+  .large .pipTL      { top: 11px; left: 12px; }
+  .large .pipBR      { bottom: 11px; right: 12px; }
+  .large .suitCenter { font-size: 54px; }
+}
