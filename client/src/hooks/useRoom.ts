@@ -32,6 +32,7 @@ type UseRoomReturn = {
   setReady: (ready: boolean) => void;
   setGame: (game: GameId) => void;
   setBots: (enabled: boolean) => void;
+  setBotLevel: (level: import("../types").BotLevel) => void;
   transferHost: (toUserId: string) => void;
   startGame: () => void;
   playCards: (cards: Card[]) => void;
@@ -155,6 +156,9 @@ export function useRoom({ roomId, player }: UseRoomOptions): UseRoomReturn {
     },
     setBots(enabled) {
       socket.emit("room:set-bots", { roomId, enabled });
+    },
+    setBotLevel(level) {
+      socket.emit("room:set-bot-level", { roomId, level });
     },
     transferHost(toUserId) {
       socket.emit("room:transfer-host", { roomId, toUserId });

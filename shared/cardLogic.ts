@@ -1,4 +1,4 @@
-import type { Card, Suit, Rank, BotLevel } from "./types";
+import type { Card, Suit, Rank } from "./types";
 import { SUITS, RANKS } from "./types";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -333,71 +333,8 @@ export function validatePlay(
   return { valid: true, combo: currentCombo };
 }
 
-// ─── Bot move calculation ─────────────────────────────────────────────────────
-
-export type BotMove = { action: "play"; cards: Card[] } | { action: "pass" };
-
-/**
- * Easy bot: always plays the smallest valid combination.
- * Priority: single < pair < triple < 5-card combos (never voluntarily plays
- * a higher combo type when a lower one would suffice).
- */
-export function calcBotMove(
-  hand: Card[],
-  lastPlayed: Card[] | null,
-  isFirstTurn: boolean,
-  _level: BotLevel = "easy",
-): BotMove {
-  const sorted = sortCards(hand);
-
-  // ── Free turn (start of game or everyone passed) ──────────────────────────
-  if (!lastPlayed || lastPlayed.length === 0) {
-    if (isFirstTurn) {
-      const threeDiamonds = sorted.find(
-        (c) => c.rank === "3" && c.suit === "♦",
-      );
-      if (threeDiamonds) return { action: "play", cards: [threeDiamonds] };
-    }
-
-    return { action: "play", cards: [sorted[0]] };
-  }
-
-  const prevCombo = parseCombo(lastPlayed);
-  if (isError(prevCombo)) return { action: "pass" };
-
-  switch (prevCombo.type) {
-    case "single": {
-      const candidate = sorted.find((c) => compareCards(c, prevCombo.card) > 0);
-      if (candidate) return { action: "play", cards: [candidate] };
-      return { action: "pass" };
-    }
-    case "pair": {
-      // Find all pairs, pick the smallest that beats the previous pair
-      const pairs = findSmallestBeatingCombo(sorted, 2, prevCombo);
-      if (pairs) return { action: "play", cards: pairs };
-      return { action: "pass" };
-    }
-
-    case "triple": {
-      const triple = findSmallestBeatingCombo(sorted, 3, prevCombo);
-      if (triple) return { action: "play", cards: triple };
-      return { action: "pass" };
-    }
-
-    case "straight":
-    case "flush":
-    case "fullHouse":
-    case "fourOfAKind":
-    case "straightFlush": {
-      const fiveCard = findSmallestBeating5Card(sorted, prevCombo);
-      if (fiveCard) return { action: "play", cards: fiveCard };
-      return { action: "pass" };
-    }
-  }
-}
-
 // ─── Helpers for bot move finding ────────────────────────────────────────────
-function combinations(cards: Card[], size: number): Card[][] {
+export function combinations(cards: Card[], size: number): Card[][] {
   if (size === 0) return [[]];
   if (cards.length < size) return [];
   const [first, ...rest] = cards;
@@ -410,7 +347,7 @@ function combinations(cards: Card[], size: number): Card[][] {
  * For pairs and triples: find the smallest valid combo of the right size
  * that beats `previous`. Returns the cards or null.
  */
-function findSmallestBeatingCombo(
+export function findSmallestBeatingCombo(
   sorted: Card[],
   size: 2 | 3,
   previous: ParsedCombo,
@@ -435,7 +372,7 @@ function findSmallestBeatingCombo(
 /**
  * For 5-card combos: find the smallest valid 5-card hand that beats `previous`.
  */
-function findSmallestBeating5Card(
+export function findSmallestBeating5Card(
   sorted: Card[],
   previous: ParsedCombo,
 ): Card[] | null {
