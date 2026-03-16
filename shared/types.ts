@@ -93,7 +93,7 @@ export type RoomState = {
   lastWinnerUserId: string | null;
 };
 
-export type BotLevel = "easy";
+export type BotLevel = 'easy' | 'normal' | 'hard';
 
 // ─── Socket payloads ─────────────────────────────────────────────────────────
 

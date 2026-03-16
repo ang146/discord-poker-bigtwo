@@ -1,9 +1,9 @@
 import type { Server } from 'socket.io';
 import type { BotPlayer, RoomState } from '../../shared/types';
-import { calcBotMove } from '../../shared/cardLogic';
 import { gameSessions, type GameSession, broadcastTurn } from './sessions';
 import { rooms } from './rooms';
 import { checkWin, advanceTurn } from './game';
+import { calcBotMove } from './botLogic';
 
 export const BOT_DELAY_MS = 1200;
 
@@ -25,17 +25,24 @@ export function scheduleBotTurn(io: Server, roomId: string): void {
 
     const hand       = s.hands.get(currentPlayer.userId) ?? [];
     const isFreeTurn = s.freeTurn || s.lastPlayedBy === currentPlayer.userId;
-    const lastPlayed =
-      isFreeTurn || s.centerPile.length === 0
-        ? null
-        : s.centerPile.at(-1)!.cards;
+    const lastPlayed = isFreeTurn || s.centerPile.length === 0
+      ? null
+      : s.centerPile.at(-1)!.cards;
 
-    const move = calcBotMove(
+    // Build opponent counts (all players, bot will filter self if needed)
+    const opponentCounts = s.turnOrder.map(uid => ({
+      userId: uid,
+      count:  s.hands.get(uid)?.length ?? 0,
+    }));
+
+    const move = calcBotMove({
       hand,
       lastPlayed,
-      s.isFirstTurn,
-      (currentPlayer as BotPlayer).level ?? 'easy',
-    );
+      isFirstTurn: s.isFirstTurn,
+      level:       (currentPlayer as BotPlayer).level ?? 'easy',
+      opponentCounts,
+      centerPile:  s.centerPile,
+    });
 
     if (move.action === 'pass') {
       executeBotPass(io, roomId, currentPlayer.userId, s);
@@ -77,7 +84,6 @@ export function executeBotPass(
   session: GameSession,
 ): void {
   session.passCount += 1;
-
   if (session.passCount >= session.turnOrder.length - 1) {
     session.freeTurn  = true;
     session.passCount = 0;
