@@ -290,8 +290,8 @@ export function registerSocketHandlers(io: Server): void {
         });
       }
 
-      if (checkWin(io, roomId, userId)) return;
       broadcastTurn(io, roomId, session);
+      if (checkWin(io, roomId, userId)) return;
       scheduleBotTurn(io, roomId);
     });
 
