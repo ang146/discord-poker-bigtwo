@@ -7,14 +7,13 @@ type Props = {
   selected?: boolean;
   small?: boolean;
   large?: boolean;
-  opponent?: boolean;
 };
 
 const RED_SUITS  = new Set(['♥', '♦']);
 const UNDERLINED = new Set(['6', '9']);
 
-export function Card({ card, faceUp = true, selected = false, small = false, large = false, opponent = false }: Props) {
-  const sizeClass = small ? styles.small : large ? styles.large : opponent ? styles.opponent : '';
+export function Card({ card, faceUp = true, selected = false, small = false, large = false }: Props) {
+  const sizeClass = small ? styles.small : large ? styles.large : '';
 
   if (!faceUp || !card) {
     return (

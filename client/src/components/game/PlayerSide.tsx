@@ -62,16 +62,14 @@ export function PlayerSide({ player, position, isSelf, isSpeaking, hand, cardCou
 
   if (avatarOnly) return identity;
 
-  // Opponent face-down fan — large cards with tight overlap
   // Outer wrapper gives the rotated strip a fixed layout footprint.
-  // Opponent card: ~96px wide, ~138px tall at max.
   // 13 cards with -76px overlap = 13*96 - 12*76 = 1248 - 912 = 336px fan width, ~138px tall.
   // After 90° rotation: layout width = 138px, layout height = 336px.
   const sideHand = (
     <div className={styles.sideHandOuter}>
       <div className={`${styles.sideHandInner} ${position === 'right' ? styles.rotateRight : styles.rotateLeft}`}>
         {Array.from({ length: count }, (_, i) => (
-          <Card key={i} faceUp={false} opponent />
+          <Card key={i} faceUp={false}/>
         ))}
       </div>
     </div>
@@ -99,7 +97,7 @@ export function PlayerSide({ player, position, isSelf, isSpeaking, hand, cardCou
     return (
       <div className={`${styles.wrap} ${styles.top}`}>
         <div className={styles.handRowFaceDown}>
-          {Array.from({ length: count }, (_, i) => <Card key={i} faceUp={false} opponent />)}
+          {Array.from({ length: count }, (_, i) => <Card key={i} faceUp={false} />)}
         </div>
         {identity}
       </div>

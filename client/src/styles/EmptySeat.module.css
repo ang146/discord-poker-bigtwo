@@ -1,38 +1,93 @@
 .seat {
-  display:flex; flex-direction:column; align-items:center; gap:8px;
-  width:100px; flex-shrink:0;
-  padding:14px 10px 12px;
-  border:1px dashed rgba(255,255,255,0.1);
-  border-radius:14px;
-  opacity:0.55;
-  transition:opacity 0.2s, border-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 80px;
+  flex-shrink: 0;
+  padding: 10px 8px;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  opacity: 0.55;
+  transition: opacity 0.2s, border-color 0.2s;
 }
-.seat:hover { opacity:0.85; border-color:rgba(255,255,255,0.22); }
+
+.seat:hover {
+  opacity: 0.85;
+  border-color: rgba(255, 255, 255, 0.22);
+}
 
 .btn {
-  width:52px; height:52px; border-radius:50%;
-  border:2px dashed rgba(255,255,255,0.22);
-  background:rgba(255,255,255,0.04);
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer;
-  transition:background 0.2s, border-color 0.2s, transform 0.15s;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
 }
+
 .btn:hover {
-  background:rgba(212,175,110,0.1);
-  border-color:rgba(212,175,110,0.5);
-  transform:scale(1.06);
+  background: rgba(212, 175, 110, 0.1);
+  border-color: rgba(212, 175, 110, 0.5);
+  transform: scale(1.06);
 }
-.btn:active { transform:scale(0.96); }
+
+.btn:active { transform: scale(0.96); }
 
 .plus {
-  font-size:22px; font-weight:300; line-height:1;
-  color:rgba(255,255,255,0.35);
-  transition:color 0.2s;
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.35);
+  transition: color 0.2s;
 }
-.btn:hover .plus { color:#d4af6e; }
+
+.btn:hover .plus { color: #d4af6e; }
 
 .label {
-  font-family:'DM Mono','Courier New',monospace;
-  font-size:10px; letter-spacing:0.14em; text-transform:uppercase;
-  color:rgba(255,255,255,0.22);
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.22);
+}
+
+/* ── 640px ── */
+@media (min-width: 640px) {
+  .seat  { width: 100px; padding: 14px 10px 12px; gap: 8px; border-radius: 14px; }
+  .btn   { width: 52px; height: 52px; }
+  .plus  { font-size: 22px; }
+  .label { font-size: 10px; }
+}
+
+/* ── 1280px ── */
+@media (min-width: 1280px) {
+  .seat  { width: 108px; }
+  .btn   { width: 56px; height: 56px; }
+}
+
+/* ── 1600px ── */
+@media (min-width: 1600px) {
+  .seat  { width: 116px; padding: 16px 12px 14px; }
+  .btn   { width: 62px; height: 62px; }
+  .plus  { font-size: 24px; }
+}
+
+/* ── 1920px ── */
+@media (min-width: 1920px) {
+  .seat  { width: 124px; }
+  .btn   { width: 68px; height: 68px; }
+  .plus  { font-size: 26px; }
+}
+
+/* ── 2560px ── */
+@media (min-width: 2560px) {
+  .seat  { width: 152px; padding: 20px 14px 18px; gap: 10px; }
+  .btn   { width: 84px; height: 84px; }
+  .plus  { font-size: 32px; }
+  .label { font-size: 13px; }
 }
