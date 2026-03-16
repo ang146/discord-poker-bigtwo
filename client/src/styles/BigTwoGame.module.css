@@ -116,6 +116,10 @@
   gap: 10px;
 }
 
+.selfHandWrap {
+  padding-top: 20px;
+}
+
 .selfHandLeft,
 .centerLeft {
   display: flex;
@@ -223,7 +227,7 @@
   font-size: clamp(10px, 1.1vw, 12px);
   padding: 5px 12px;
   border-color: rgba(255, 255, 255, 0.2);
-  z-index: 5;
+  z-index: 2;
 }
 
 .selfCardWrap {
